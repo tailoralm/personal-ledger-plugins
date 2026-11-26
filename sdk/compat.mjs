@@ -81,7 +81,10 @@ export function toLegacyTransactions(importResult, options = {}) {
     ...(item.value !== undefined ? { value: item.value } : {}),
   }));
 
-  const sideInvestments = (importResult.sideInvestments ?? []).map(item => ({ ...item }));
+  const sideInvestments = (importResult.sideInvestments ?? []).map(item => ({
+    ...item,
+    time: item.time.replace(/^(\d{4})-(\d{2})-(\d{2})/, '$3/$2/$1'),
+  }));
 
   return {
     transactions,

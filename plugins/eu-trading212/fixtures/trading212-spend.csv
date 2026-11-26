@@ -1,0 +1,12 @@
+Trading 212 Spend export
+Merchant name,Currency (Total),Action,Total,Time (UTC),ID
+,Synthetic heading,Statement note,,,
+"Test Café, kiosk",EUR,Card debit,-5.25,2026-10-02 10:00:00,
+"Test Café, kiosk",EUR,Card debit,-5.25,2026-10-02 10:00:00,
+,GBP,Card credit,1.75,2026-10-02 11:00:00,refund-fixture
+,,Deposit,30.00,2026-10-03 09:00:00,deposit-fixture
+,USD,Withdrawal,20.00,2026-10-04 12:00:00,withdrawal-fixture
+,EUR,Card debit,4.00,2026-02-30 10:00:00,bad-date
+,EURO,Card debit,-4.00,2026-10-05 10:00:00,bad-currency
+,EUR,Card debit,invalid,2026-10-06 10:00:00,bad-amount
+,EUR,Transfer,50.00,2026-10-07 10:00:00,unsupported-transfer

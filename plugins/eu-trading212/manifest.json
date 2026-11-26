@@ -1,0 +1,73 @@
+{
+  "$schema": "../../schemas/plugin-manifest.v1.schema.json",
+  "id": "eu-trading212",
+  "name": "Trading 212",
+  "version": "1.0.0",
+  "pluginApiVersion": "1",
+  "type": "bank-importer",
+  "tier": "official",
+  "description": "Imports Trading 212 Spend and Invest CSV statements, including optional full activity and legacy investment exports.",
+  "author": {
+    "name": "Personal Ledger"
+  },
+  "license": "MIT",
+  "institution": {
+    "id": "trading212",
+    "name": "Trading 212",
+    "country": "EU",
+    "legacyNames": [
+      "Trading212"
+    ]
+  },
+  "formats": [
+    "csv"
+  ],
+  "mimeTypes": [
+    "text/csv",
+    "application/csv",
+    "text/plain"
+  ],
+  "extensions": [
+    ".csv"
+  ],
+  "entrypoint": "importer.mjs",
+  "accountTypes": [
+    "bank",
+    "spend",
+    "invest"
+  ],
+  "languages": [
+    "en"
+  ],
+  "keywords": [
+    "trading212",
+    "csv",
+    "spend",
+    "invest"
+  ],
+  "capabilities": {
+    "supportsRunningBalance": false,
+    "supportsSourceIds": true,
+    "supportsMultiCurrency": true,
+    "supportsYearInference": false,
+    "supportsInvestments": true,
+    "options": [
+      {
+        "id": "includeAllActivity",
+        "label": "Include all activity",
+        "description": "Include withdrawals, cashback, interest, stock orders, and dividends alongside card transactions and deposits.",
+        "type": "boolean",
+        "default": true,
+        "legacyCliDefault": false
+      }
+    ],
+    "supportsSideInvestments": true,
+    "supportsBackfill": true
+  },
+  "limits": {
+    "maxFileBytes": 20971520,
+    "timeoutMs": 15000,
+    "maxMemoryMb": 128
+  },
+  "permissions": []
+}

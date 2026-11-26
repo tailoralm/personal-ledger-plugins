@@ -130,7 +130,7 @@ When multiple plugins are tried in automatic mode:
 - `institutionId`: Must equal `manifest.institution.id`.
 - `transactions`: Array of `NormalizedTransaction`.
 - `diagnostics`: Array of `ImportDiagnostic` (skipped, filtered, or invalid rows).
-- `sideInvestments` *(optional)*: Legacy investment rows (`Investment` model parity).
+- `sideInvestments` *(optional)*: Investment rows for the legacy side export. Keep the source timestamp in `time`. The compatibility adapter converts a leading ISO date to `DD/MM/YYYY` and preserves the remainder of the timestamp.
 - `metadata` *(optional)*: Extra non-transactional parse summary.
 
 ### `NormalizedTransaction`

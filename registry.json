@@ -71,6 +71,82 @@
       ]
     },
     {
+      "id": "eu-trading212",
+      "name": "Trading 212",
+      "description": "Imports Trading 212 Spend and Invest CSV statements, including optional full activity and legacy investment exports.",
+      "tier": "official",
+      "author": {
+        "name": "Personal Ledger"
+      },
+      "license": "MIT",
+      "institution": {
+        "id": "trading212",
+        "name": "Trading 212",
+        "country": "EU",
+        "legacyNames": [
+          "Trading212"
+        ]
+      },
+      "formats": [
+        "csv"
+      ],
+      "mimeTypes": [
+        "text/csv",
+        "application/csv",
+        "text/plain"
+      ],
+      "extensions": [
+        ".csv"
+      ],
+      "accountTypes": [
+        "bank",
+        "spend",
+        "invest"
+      ],
+      "languages": [
+        "en"
+      ],
+      "keywords": [
+        "trading212",
+        "csv",
+        "spend",
+        "invest"
+      ],
+      "capabilities": {
+        "supportsRunningBalance": false,
+        "supportsSourceIds": true,
+        "supportsMultiCurrency": true,
+        "supportsYearInference": false,
+        "supportsInvestments": true,
+        "options": [
+          {
+            "id": "includeAllActivity",
+            "label": "Include all activity",
+            "description": "Include withdrawals, cashback, interest, stock orders, and dividends alongside card transactions and deposits.",
+            "type": "boolean",
+            "default": true,
+            "legacyCliDefault": false
+          }
+        ],
+        "supportsSideInvestments": true,
+        "supportsBackfill": true
+      },
+      "latestVersion": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "pluginApiVersion": "1",
+          "tag": "eu-trading212@1.0.0",
+          "packageFile": "eu-trading212-1.0.0.zip",
+          "downloadUrl": "https://github.com/tailoralm/personal-ledger-plugins/releases/download/eu-trading212%401.0.0/eu-trading212-1.0.0.zip",
+          "sourcePath": "plugins/eu-trading212",
+          "sha256": "e5b9e1d02826afb2b4c995cd4ab06eeb98fe6d947a16b5a40b492428b6c3c32c",
+          "sizeBytes": 8522,
+          "changelog": "- Port Trading 212 Spend and Invest CSV parsing, including full activity, statement-only mode, and the legacy side investment export."
+        }
+      ]
+    },
+    {
       "id": "pt-activobank",
       "name": "ActivoBank",
       "description": "Parses ActivoBank Portugal PDF account statements with positioned column detection, statement-level year inference, and running balance extraction.",
