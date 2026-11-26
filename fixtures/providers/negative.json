@@ -1,0 +1,16 @@
+{
+  "malformedBody": "{",
+  "missingItems": { "operation": "quote" },
+  "wrongOperation": { "operation": "metadata", "items": [] },
+  "emptyPage": { "operation": "quote", "items": [] },
+  "unsupportedCursor": { "operation": "quote", "items": [], "nextCursor": "page-2" },
+  "middlewareError": { "error": "invalid-data" },
+  "invalidQuoteFields": [
+    { "currency": "usd" },
+    { "date": "31/10/2026" },
+    { "price": "01.2" },
+    { "price": 1.2 },
+    { "basis": "unknown" }
+  ],
+  "wrongHistoryBasis": { "basis": "split-adjusted" }
+}

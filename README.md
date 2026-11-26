@@ -1,11 +1,13 @@
 # personal-ledger-plugins
 
-Bank statement importer plugin SDK v1, Draft 2020-12 JSON Schemas, reference templates, and cross-repository compatibility fixtures for Personal Ledger.
+Personal Ledger SDKs for bank statement importers and market data providers, with Draft 2020-12 JSON Schemas, reference packages, and compatibility fixtures.
 
 ## Repository Layout
 
 ```text
-registry.json                          # Deterministic unauthenticated marketplace index
+registry.json                          # Bank importer marketplace index
+provider-catalog.json                  # Separate provider release metadata
+providers/                             # Synthetic market and FX packages
 schemas/
   plugin-manifest.v1.schema.json       # Plugin manifest contract
   detection-result.v1.schema.json      # Detection output contract
@@ -72,6 +74,7 @@ In offline sibling worktrees without local `node_modules/`, host tooling (`sdk/p
 
 ## Documentation
 
+- [Market Data Provider SDK v1](docs/market-data-providers.md)
 - [Plugin API v1 Specification](docs/plugin-api-v1.md)
 - [Creating a Bank Importer Plugin](docs/creating-plugins.md)
 - [Marketplace Registry, CI Verification & Release Pipeline](docs/marketplace-and-releases.md)

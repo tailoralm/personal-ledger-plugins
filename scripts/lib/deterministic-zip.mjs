@@ -132,7 +132,7 @@ export function buildDeterministicZip(entries, options = {}) {
     }
 
     const crc32 = zlib.crc32(rawData) >>> 0;
-    const deflated = rawData.byteLength === 0 ? rawData : zlib.deflateRawSync(rawData, { level: 9 });
+    const deflated = options.store || rawData.byteLength === 0 ? rawData : zlib.deflateRawSync(rawData, { level: 9 });
     const useStore = rawData.byteLength === 0 || deflated.byteLength >= rawData.byteLength;
     const method = useStore ? 0 : 8;
     const payload = useStore ? rawData : deflated;

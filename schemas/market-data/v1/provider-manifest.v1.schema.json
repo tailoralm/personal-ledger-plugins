@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "provider-manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "pluginApiVersion": { "const": "1" },
+    "type": {
+      "enum": ["market-data-provider", "exchange-rate-provider"]
+    },
+    "id": { "type": "string", "minLength": 1, "maxLength": 100, "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "^[^\\u0000-\\u001f\\u007f]+$" },
+    "version": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$" },
+    "entrypoint": { "type": "string", "minLength": 1, "maxLength": 240, "pattern": "\\.(?:mjs|js)$" },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "search": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "batchSize": { "const": 1 },
+            "pagination": { "type": "boolean" },
+            "creditCost": { "type": "integer", "minimum": 1, "maximum": 100000 }
+          },
+          "required": ["batchSize", "pagination", "creditCost"]
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "batchSize": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "pagination": { "type": "boolean" },
+            "creditCost": { "type": "integer", "minimum": 1, "maximum": 100000 }
+          },
+          "required": ["batchSize", "pagination", "creditCost"]
+        },
+        "quote": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "batchSize": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "pagination": { "type": "boolean" },
+            "creditCost": { "type": "integer", "minimum": 1, "maximum": 100000 }
+          },
+          "required": ["batchSize", "pagination", "creditCost"]
+        },
+        "history": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "batchSize": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "pagination": { "type": "boolean" },
+            "creditCost": { "type": "integer", "minimum": 1, "maximum": 100000 }
+          },
+          "required": ["batchSize", "pagination", "creditCost"]
+        },
+        "fx": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "batchSize": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "pagination": { "type": "boolean" },
+            "creditCost": { "type": "integer", "minimum": 1, "maximum": 100000 }
+          },
+          "required": ["batchSize", "pagination", "creditCost"]
+        },
+        "corporate-actions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "batchSize": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "pagination": { "type": "boolean" },
+            "creditCost": { "type": "integer", "minimum": 1, "maximum": 100000 }
+          },
+          "required": ["batchSize", "pagination", "creditCost"]
+        }
+      },
+      "required": [],
+      "minProperties": 1
+    },
+    "markets": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 4, "pattern": "^[A-Z0-9]{4}$" },
+      "maxItems": 100,
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 48, "pattern": "^[a-z][a-z0-9-]*$" },
+          "url": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^https://[a-z0-9.-]+/(?:[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?:/|$))*$" },
+          "credential": { "type": "string", "minLength": 1, "maxLength": 48, "pattern": "^[a-z][a-z0-9-]*$" }
+        },
+        "required": ["id", "url"]
+      },
+      "maxItems": 32,
+      "minItems": 1
+    },
+    "authentication": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1, "maxLength": 48, "pattern": "^[a-z][a-z0-9-]*$" },
+              "label": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "^[^\\u0000-\\u001f\\u007f]+$" },
+              "type": { "const": "bearer" }
+            },
+            "required": ["id", "label", "type"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1, "maxLength": 48, "pattern": "^[a-z][a-z0-9-]*$" },
+              "label": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "^[^\\u0000-\\u001f\\u007f]+$" },
+              "type": { "const": "api-key" },
+              "header": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^x-[a-z0-9-]+$" }
+            },
+            "required": ["id", "label", "type", "header"]
+          }
+        ]
+      },
+      "maxItems": 16,
+      "minItems": 0
+    },
+    "recommended": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requestsPerMinute": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "creditsPerDay": { "type": "integer", "minimum": 1, "maximum": 1000000000 },
+        "intervalMinutes": { "type": "integer", "minimum": 1, "maximum": 10080 }
+      },
+      "required": ["requestsPerMinute", "creditsPerDay", "intervalMinutes"]
+    }
+  },
+  "required": ["pluginApiVersion", "type", "id", "name", "version", "entrypoint", "capabilities", "markets", "routes", "authentication", "recommended"],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": { "const": "exchange-rate-provider" }
+        }
+      },
+      "then": {
+        "properties": {
+          "capabilities": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "fx": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "batchSize": { "type": "integer", "minimum": 1, "maximum": 100 },
+                  "pagination": { "type": "boolean" },
+                  "creditCost": { "type": "integer", "minimum": 1, "maximum": 100000 }
+                },
+                "required": ["batchSize", "pagination", "creditCost"]
+              }
+            },
+            "required": ["fx"]
+          }
+        }
+      }
+    }
+  ]
+}

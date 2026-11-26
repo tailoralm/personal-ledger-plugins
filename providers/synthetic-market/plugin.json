@@ -1,0 +1,66 @@
+{
+  "pluginApiVersion": "1",
+  "type": "market-data-provider",
+  "id": "example.synthetic-market",
+  "name": "Synthetic Market",
+  "version": "1.0.0",
+  "entrypoint": "index.mjs",
+  "capabilities": {
+    "search": {
+      "batchSize": 1,
+      "pagination": true,
+      "creditCost": 2
+    },
+    "metadata": {
+      "batchSize": 2,
+      "pagination": false,
+      "creditCost": 2
+    },
+    "quote": {
+      "batchSize": 2,
+      "pagination": false,
+      "creditCost": 2
+    },
+    "history": {
+      "batchSize": 2,
+      "pagination": true,
+      "creditCost": 2
+    },
+    "fx": {
+      "batchSize": 2,
+      "pagination": false,
+      "creditCost": 2
+    },
+    "corporate-actions": {
+      "batchSize": 2,
+      "pagination": false,
+      "creditCost": 2
+    }
+  },
+  "markets": [
+    "XNAS"
+  ],
+  "routes": [
+    {
+      "id": "market",
+      "url": "https://market.example.test/v1/data",
+      "credential": "token"
+    },
+    {
+      "id": "public",
+      "url": "https://market.example.test/v1/public"
+    }
+  ],
+  "authentication": [
+    {
+      "id": "token",
+      "label": "Synthetic token",
+      "type": "bearer"
+    }
+  ],
+  "recommended": {
+    "requestsPerMinute": 30,
+    "creditsPerDay": 500,
+    "intervalMinutes": 60
+  }
+}

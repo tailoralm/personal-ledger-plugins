@@ -13,9 +13,11 @@ This repository defines Plugin SDK v1, Draft 2020-12 JSON Schemas, JavaScript an
 2. **MuPDF runs strictly in the host**:
    - PDF word extraction happens only in `sdk/pdf-host.mjs`. Plugins operate purely on frozen `input.pdf` data via `sdk.pdf`.
 3. **Zero permissions**:
-   - All v1 manifests must specify `"permissions": []`.
+   - All importer v1 manifests must specify `"permissions": []`.
 4. **Synthetic fixtures only**:
    - NEVER add real bank statements, personal names, IBANs, card numbers, or account numbers anywhere in the repository.
+
+Providers use separate `providers/*/plugin.json` manifests. Declare exact HTTPS routes and keep all actual HTTP dispatch and credential handling in the core broker. Provider hooks translate pure JSON in QuickJS and may resolve only in-package relative JavaScript.
 
 ## Data Contracts
 

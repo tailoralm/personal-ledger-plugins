@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -34,5 +36,51 @@ jobs:
       - name: Run marketplace CI verification
         run: npm run ci:verify
 
+      - name: Check provider catalog history
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if git cat-file -e "$BASE_SHA:provider-catalog.json" 2>/dev/null; then
+            git show "$BASE_SHA:provider-catalog.json" > "$RUNNER_TEMP/provider-catalog-base.json"
+            npm run provider:catalog:check -- --baseline "$RUNNER_TEMP/provider-catalog-base.json"
+          fi
+
       - name: Run full test suite
         run: npm test
+
+  provider-core:
+    name: Provider integration with pinned core
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      CORE_READ_TOKEN: ${{ secrets.PERSONAL_LEDGER_CORE_READ_TOKEN }}
+    steps:
+      - name: Check out plugins
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check out private core pin
+        if: env.CORE_READ_TOKEN != ''
+        uses: actions/checkout@v4
+        with:
+          repository: tailoralm/Personal-Ledger
+          ref: f145429702c100bdeeb5b4311b92f53db6bb0f13
+          token: ${{ env.CORE_READ_TOKEN }}
+          persist-credentials: false
+          path: .core-source
+
+      - uses: actions/setup-node@v4
+        if: env.CORE_READ_TOKEN != ''
+        with:
+          node-version: '24'
+
+      - name: Check contract parity and broker integration
+        if: env.CORE_READ_TOKEN != ''
+        run: env -u CORE_READ_TOKEN npm run provider:test:core
+        env:
+          PERSONAL_LEDGER_CORE_SOURCE: .core-source
+
+      - name: Report unavailable private-core access
+        if: env.CORE_READ_TOKEN == ''
+        run: echo "::notice::Core integration requires the PERSONAL_LEDGER_CORE_READ_TOKEN repository secret."
