@@ -1,0 +1,24 @@
+{
+  "caseId": "02-negative-unrelated",
+  "description": "Unrelated CSV and PDF inputs must fail detection with confidence 0 and reject parse() with ImporterError.",
+  "cases": [
+    {
+      "inputFile": "inputs/negative-unrelated.csv",
+      "pluginDir": "templates/javascript-importer",
+      "expectedDetection": {
+        "matched": false,
+        "confidence": 0,
+        "reason": "Required Example CSV Bank headers (Account, Status, Completed Date, Description, Amount) were not found."
+      }
+    },
+    {
+      "inputFile": "inputs/negative-unrelated.pdf",
+      "pluginDir": "templates/typescript-importer",
+      "expectedDetection": {
+        "matched": false,
+        "confidence": 0,
+        "reason": "PDF does not contain Example PDF Bank table headers."
+      }
+    }
+  ]
+}

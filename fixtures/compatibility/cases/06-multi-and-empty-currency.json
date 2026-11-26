@@ -1,0 +1,46 @@
+{
+  "caseId": "06-multi-and-empty-currency",
+  "description": "Supports explicit ISO 4217 currency codes (EUR, USD, JPY) as well as empty string when the statement omits currency.",
+  "expectedImportResult": {
+    "pluginApiVersion": "1",
+    "pluginId": "multi-currency-sample",
+    "institutionId": "sample-bank",
+    "transactions": [
+      {
+        "date": "2026-08-01",
+        "description": "Tokyo Transit Card",
+        "amount": "-1500",
+        "currency": "JPY",
+        "evidence": {
+          "row": 2,
+          "locator": "Record 2",
+          "rawAmount": "-1500"
+        }
+      },
+      {
+        "date": "2026-08-02",
+        "description": "Cloud Hosting",
+        "amount": "-19.99",
+        "currency": "USD",
+        "evidence": {
+          "row": 3,
+          "locator": "Record 3",
+          "rawAmount": "-19.99"
+        }
+      },
+      {
+        "date": "2026-08-03",
+        "description": "Local Bakery",
+        "amount": "-4.20",
+        "currency": "",
+        "evidence": {
+          "row": 4,
+          "locator": "Record 4",
+          "rawAmount": "-4.20"
+        }
+      }
+    ],
+    "diagnostics": []
+  },
+  "expectedLegacyCurrencies": ["JPY", "USD", ""]
+}

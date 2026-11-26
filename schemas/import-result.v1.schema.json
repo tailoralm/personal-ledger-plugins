@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://personal-ledger.dev/schemas/import-result.v1.schema.json",
+  "title": "Personal Ledger Bank Importer Import Result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pluginApiVersion",
+    "pluginId",
+    "institutionId",
+    "transactions",
+    "diagnostics"
+  ],
+  "properties": {
+    "pluginApiVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "pluginId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)+$"
+    },
+    "institutionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transactions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/transaction"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    },
+    "sideInvestments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sideInvestment"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "transaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "description", "amount", "currency", "evidence"],
+      "properties": {
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "amount": {
+          "type": "string",
+          "pattern": "^-?\\d+(?:\\.\\d+)?$"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^([A-Z]{3})?$"
+        },
+        "balance": {
+          "type": "string",
+          "pattern": "^-?\\d+(?:\\.\\d+)?$"
+        },
+        "sourceId": {
+          "type": "string"
+        },
+        "accountReference": {
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row", "locator"],
+      "properties": {
+        "row": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rawDate": {
+          "type": "string"
+        },
+        "rawAmount": {
+          "type": "string"
+        },
+        "runningBalance": {
+          "type": "string"
+        },
+        "yearInferred": {
+          "type": "boolean"
+        },
+        "action": {
+          "type": "string"
+        },
+        "investment": {
+          "$ref": "#/$defs/investmentEvidence"
+        }
+      }
+    },
+    "investmentEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "action",
+        "timestamp",
+        "isin",
+        "ticker",
+        "instrumentName",
+        "shares",
+        "pricePerShare",
+        "priceCurrency",
+        "exchangeRate",
+        "conversionFee",
+        "feeCurrency",
+        "withholdingTax",
+        "taxCurrency"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["buy", "sell", "dividend"]
+        },
+        "action": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "isin": { "type": "string" },
+        "ticker": { "type": "string" },
+        "instrumentName": { "type": "string" },
+        "shares": { "type": "string" },
+        "pricePerShare": { "type": "string" },
+        "priceCurrency": { "type": "string" },
+        "exchangeRate": { "type": "string" },
+        "conversionFee": { "type": "string" },
+        "feeCurrency": { "type": "string" },
+        "withholdingTax": { "type": "string" },
+        "taxCurrency": { "type": "string" }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["locator", "reason"],
+      "properties": {
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["info", "warning", "error"]
+        },
+        "date": {
+          "type": "string"
+        },
+        "rawDate": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "sideInvestment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action",
+        "time",
+        "ticker",
+        "name",
+        "shares",
+        "pricePerShare",
+        "currencyPricePerShare",
+        "exchangeRate",
+        "total",
+        "currencyTotal",
+        "conversionFee",
+        "currencyConversionFee"
+      ],
+      "properties": {
+        "action": { "type": "string" },
+        "time": { "type": "string" },
+        "ticker": { "type": "string" },
+        "name": { "type": "string" },
+        "shares": { "type": "string" },
+        "pricePerShare": { "type": "string" },
+        "currencyPricePerShare": { "type": "string" },
+        "exchangeRate": { "type": "string" },
+        "total": { "type": "string" },
+        "currencyTotal": { "type": "string" },
+        "conversionFee": { "type": "string" },
+        "currencyConversionFee": { "type": "string" }
+      }
+    }
+  }
+}

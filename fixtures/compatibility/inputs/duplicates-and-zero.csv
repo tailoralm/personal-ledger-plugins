@@ -1,0 +1,3 @@
+Account,Status,Completed Date,Description,Amount,Currency,Balance,Reference
+Checking,COMPLETED,2026-08-06 09:15:00,Cafe,-5.00,EUR,5.00,dup-a
+Checking,COMPLETED,2026-08-06 09:15:00,Cafe,-5.00,EUR,0.00,dup-b

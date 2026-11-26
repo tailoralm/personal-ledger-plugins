@@ -1,0 +1,53 @@
+{
+  "$schema": "../../schemas/plugin-manifest.v1.schema.json",
+  "id": "example-csv-bank",
+  "name": "Example CSV Bank Importer",
+  "version": "1.0.0",
+  "pluginApiVersion": "1",
+  "type": "bank-importer",
+  "description": "Reference JavaScript CSV importer template for Personal Ledger.",
+  "author": {
+    "name": "Personal Ledger Contributors",
+    "url": "https://github.com/tailoralm/personal-ledger-plugins"
+  },
+  "license": "MIT",
+  "institution": {
+    "id": "example-csv-bank",
+    "name": "Example CSV Bank",
+    "country": "PT",
+    "legacyNames": ["Example CSV Bank"]
+  },
+  "formats": ["csv"],
+  "mimeTypes": ["text/csv", "application/csv"],
+  "extensions": [".csv"],
+  "entrypoint": "importer.mjs",
+  "accountTypes": ["bank", "spend"],
+  "capabilities": {
+    "supportsRunningBalance": true,
+    "supportsSourceIds": true,
+    "supportsMultiCurrency": true,
+    "supportsYearInference": false,
+    "supportsInvestments": false,
+    "supportsSideInvestments": false,
+    "supportsBackfill": false,
+    "options": [
+      {
+        "id": "includePending",
+        "label": "Include pending rows",
+        "description": "Include transactions marked PENDING in addition to COMPLETED rows.",
+        "type": "boolean",
+        "default": false,
+        "legacyCliDefault": false
+      }
+    ]
+  },
+  "limits": {
+    "maxFileBytes": 10485760,
+    "timeoutMs": 5000,
+    "maxMemoryMb": 128
+  },
+  "permissions": [],
+  "languages": ["en", "pt"],
+  "keywords": ["template", "csv", "example"],
+  "tier": "official"
+}

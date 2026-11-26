@@ -1,0 +1,8 @@
+Account,Status,Completed Date,Description,Amount,Currency,Balance,Reference
+Checking,COMPLETED,2026-08-01 09:00:00,Monthly Salary,1850.00,EUR,1850.00,tx-001
+Checking,COMPLETED,2026-08-02 12:15:30,"Café Central, Lisboa",-12.50,EUR,1837.50,tx-002
+Checking,COMPLETED,2026-08-03 18:40:00,Online Store Purchase,-25.00,USD,100.00,tx-003
+Savings,COMPLETED,2026-08-04 08:00:00,Vault Transfer,-200.00,EUR,1637.50,tx-004
+Checking,PENDING,2026-08-05 10:00:00,Pending Hotel Hold,-120.00,EUR,1717.50,tx-005
+Checking,COMPLETED,2026-02-30 11:00:00,Bad Calendar Date,-5.00,EUR,1832.50,tx-006
+Checking,COMPLETED,2026-08-06 14:20:00,Zero Balance Transfer,-1837.50,EUR,0.00,tx-007

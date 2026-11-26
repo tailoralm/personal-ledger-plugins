@@ -1,0 +1,45 @@
+{
+  "caseId": "04-real-zero-balance",
+  "description": "A real 0.00 running balance must be preserved (never collapsed to empty string or omitted).",
+  "inputFile": "inputs/duplicates-and-zero.csv",
+  "pluginDir": "templates/javascript-importer",
+  "expectedImportResult": {
+    "pluginApiVersion": "1",
+    "pluginId": "example-csv-bank",
+    "institutionId": "example-csv-bank",
+    "transactions": [
+      {
+        "date": "2026-08-06",
+        "description": "Cafe",
+        "amount": "-5.00",
+        "currency": "EUR",
+        "balance": "5.00",
+        "sourceId": "dup-a",
+        "evidence": {
+          "row": 2,
+          "locator": "Record 2",
+          "rawDate": "2026-08-06 09:15:00",
+          "rawAmount": "-5.00",
+          "runningBalance": "5.00"
+        }
+      },
+      {
+        "date": "2026-08-06",
+        "description": "Cafe",
+        "amount": "-5.00",
+        "currency": "EUR",
+        "balance": "0.00",
+        "sourceId": "dup-b",
+        "evidence": {
+          "row": 3,
+          "locator": "Record 3",
+          "rawDate": "2026-08-06 09:15:00",
+          "rawAmount": "-5.00",
+          "runningBalance": "0.00"
+        }
+      }
+    ],
+    "diagnostics": []
+  },
+  "expectedLegacyZeroBalance": "0.00"
+}

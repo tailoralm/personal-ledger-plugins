@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://personal-ledger.dev/schemas/detection-result.v1.schema.json",
+  "title": "Personal Ledger Bank Importer Detection Result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["matched", "confidence", "reason"],
+  "properties": {
+    "matched": {
+      "type": "boolean"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "format": {
+      "type": "string",
+      "enum": ["pdf", "csv", "xlsx"]
+    },
+    "institutionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ambiguity": {
+      "$ref": "#/$defs/ambiguity"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "if": {
+    "properties": {
+      "matched": {
+        "const": false
+      }
+    },
+    "required": ["matched"]
+  },
+  "then": {
+    "properties": {
+      "confidence": {
+        "const": 0
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "confidence": {
+        "exclusiveMinimum": 0,
+        "maximum": 1
+      }
+    }
+  },
+  "$defs": {
+    "ambiguity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["possibleOverlap"],
+      "properties": {
+        "possibleOverlap": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

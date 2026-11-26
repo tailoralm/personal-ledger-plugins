@@ -1,0 +1,11 @@
+{
+  "caseId": "03-duplicate-identical-rows",
+  "description": "Identical duplicate purchases on the same timestamp must be preserved as separate transaction entries.",
+  "inputFile": "inputs/duplicates-and-zero.csv",
+  "pluginDir": "templates/javascript-importer",
+  "expectedTransactionCount": 2,
+  "expectedRows": [
+    { "date": "2026-08-06", "description": "Cafe", "amount": "-5.00", "currency": "EUR", "balance": "5.00", "sourceId": "dup-a", "row": 2 },
+    { "date": "2026-08-06", "description": "Cafe", "amount": "-5.00", "currency": "EUR", "balance": "0.00", "sourceId": "dup-b", "row": 3 }
+  ]
+}

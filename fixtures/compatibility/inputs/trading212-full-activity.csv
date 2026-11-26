@@ -1,0 +1,9 @@
+Action,Time (UTC),ISIN,Ticker,Name,Notes,ID,No. of shares,Price / share,Currency (Price / share),Exchange rate,Total,Currency (Total),Withholding tax,Currency (Withholding tax),Currency conversion fee,Currency (Currency conversion fee),Merchant name,Merchant category
+Deposit,2026-09-01 08:00:00,,,,,dep-1,,,,,1000.00,EUR,,,,,,
+Card debit,2026-09-02 10:00:00,,,,,card-1,,,,,-50.00,EUR,,,,,Cafe Central,Restaurants
+Spending cashback,2026-09-02 10:05:00,,,,,cb-1,,,,,0.75,EUR,,,,,,
+Interest on cash,2026-09-03 00:00:00,,,,,int-1,,,,,1.25,EUR,,,,,,
+Market buy,2026-09-04 14:30:00,US0378331005,AAPL,Apple,,buy-1,1.25000000,200.00,USD,1.25,200.30,EUR,,,0.30,EUR,,
+Dividend (Dividend),2026-09-15 12:00:00,US0378331005,AAPL,Apple,,,2.00000000,0.25,USD,1.25,0.40,EUR,0.06,USD,,,,
+Market sell,2026-09-20 16:00:00,US0378331005,AAPL,Apple,,sell-1,0.50000000,220.00,USD,1.10,99.85,EUR,,,0.15,EUR,,
+Unknown action,2026-09-21 10:00:00,,,,,unk-1,,,,,5.00,EUR,,,,,,
