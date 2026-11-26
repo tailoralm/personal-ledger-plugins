@@ -1,0 +1,228 @@
+{
+  "caseId": "07-structured-investment-evidence",
+  "description": "Full Trading212-style activity with buy/sell/dividend structured investment evidence, sideInvestments legacy store parity, and diagnostic filtering.",
+  "inputFile": "inputs/trading212-full-activity.csv",
+  "expectedImportResult": {
+    "pluginApiVersion": "1",
+    "pluginId": "trading212-csv",
+    "institutionId": "trading212",
+    "transactions": [
+      {
+        "date": "2026-09-01",
+        "description": "Deposit",
+        "amount": "1000.00",
+        "currency": "EUR",
+        "sourceId": "dep-1",
+        "evidence": {
+          "row": 2,
+          "locator": "Record 2",
+          "rawDate": "2026-09-01 08:00:00",
+          "rawAmount": "1000.00",
+          "action": "deposit"
+        }
+      },
+      {
+        "date": "2026-09-02",
+        "description": "Cafe Central",
+        "amount": "-50.00",
+        "currency": "EUR",
+        "sourceId": "card-1",
+        "evidence": {
+          "row": 3,
+          "locator": "Record 3",
+          "rawDate": "2026-09-02 10:00:00",
+          "rawAmount": "-50.00",
+          "action": "card debit"
+        }
+      },
+      {
+        "date": "2026-09-02",
+        "description": "Spending cashback",
+        "amount": "0.75",
+        "currency": "EUR",
+        "sourceId": "cb-1",
+        "evidence": {
+          "row": 4,
+          "locator": "Record 4",
+          "rawDate": "2026-09-02 10:05:00",
+          "rawAmount": "0.75",
+          "action": "spending cashback"
+        }
+      },
+      {
+        "date": "2026-09-03",
+        "description": "Interest on cash",
+        "amount": "1.25",
+        "currency": "EUR",
+        "sourceId": "int-1",
+        "evidence": {
+          "row": 5,
+          "locator": "Record 5",
+          "rawDate": "2026-09-03 00:00:00",
+          "rawAmount": "1.25",
+          "action": "interest on cash"
+        }
+      },
+      {
+        "date": "2026-09-04",
+        "description": "Market buy · AAPL (Apple)",
+        "amount": "-200.30",
+        "currency": "EUR",
+        "sourceId": "buy-1",
+        "evidence": {
+          "row": 6,
+          "locator": "Record 6",
+          "rawDate": "2026-09-04 14:30:00",
+          "rawAmount": "200.30",
+          "action": "market buy",
+          "investment": {
+            "kind": "buy",
+            "action": "Market buy",
+            "timestamp": "2026-09-04 14:30:00",
+            "isin": "US0378331005",
+            "ticker": "AAPL",
+            "instrumentName": "Apple",
+            "shares": "1.25000000",
+            "pricePerShare": "200.00",
+            "priceCurrency": "USD",
+            "exchangeRate": "1.25",
+            "conversionFee": "0.30",
+            "feeCurrency": "EUR",
+            "withholdingTax": "",
+            "taxCurrency": ""
+          }
+        }
+      },
+      {
+        "date": "2026-09-15",
+        "description": "Dividend · AAPL (Apple)",
+        "amount": "0.40",
+        "currency": "EUR",
+        "sourceId": "div:2026-09-15 12:00:00|AAPL|0.40|2.00000000",
+        "evidence": {
+          "row": 7,
+          "locator": "Record 7",
+          "rawDate": "2026-09-15 12:00:00",
+          "rawAmount": "0.40",
+          "action": "dividend (dividend)",
+          "investment": {
+            "kind": "dividend",
+            "action": "Dividend (Dividend)",
+            "timestamp": "2026-09-15 12:00:00",
+            "isin": "US0378331005",
+            "ticker": "AAPL",
+            "instrumentName": "Apple",
+            "shares": "2.00000000",
+            "pricePerShare": "0.25",
+            "priceCurrency": "USD",
+            "exchangeRate": "1.25",
+            "conversionFee": "",
+            "feeCurrency": "",
+            "withholdingTax": "0.06",
+            "taxCurrency": "USD"
+          }
+        }
+      },
+      {
+        "date": "2026-09-20",
+        "description": "Market sell · AAPL (Apple)",
+        "amount": "99.85",
+        "currency": "EUR",
+        "sourceId": "sell-1",
+        "evidence": {
+          "row": 8,
+          "locator": "Record 8",
+          "rawDate": "2026-09-20 16:00:00",
+          "rawAmount": "99.85",
+          "action": "market sell",
+          "investment": {
+            "kind": "sell",
+            "action": "Market sell",
+            "timestamp": "2026-09-20 16:00:00",
+            "isin": "US0378331005",
+            "ticker": "AAPL",
+            "instrumentName": "Apple",
+            "shares": "0.50000000",
+            "pricePerShare": "220.00",
+            "priceCurrency": "USD",
+            "exchangeRate": "1.10",
+            "conversionFee": "0.15",
+            "feeCurrency": "EUR",
+            "withholdingTax": "",
+            "taxCurrency": ""
+          }
+        }
+      }
+    ],
+    "diagnostics": [
+      {
+        "locator": "Record 9",
+        "code": "UNSUPPORTED_ACTION",
+        "severity": "info",
+        "reason": "Action outside supported statement activity",
+        "date": "2026-09-21",
+        "rawDate": "2026-09-21 10:00:00",
+        "description": "Unknown action",
+        "value": "5.00 EUR"
+      }
+    ],
+    "sideInvestments": [
+      {
+        "action": "Spending cashback",
+        "time": "02/09/2026 10:05:00",
+        "ticker": "",
+        "name": "",
+        "shares": "",
+        "pricePerShare": "",
+        "currencyPricePerShare": "",
+        "exchangeRate": "",
+        "total": "0.75",
+        "currencyTotal": "EUR",
+        "conversionFee": "",
+        "currencyConversionFee": ""
+      },
+      {
+        "action": "Interest on cash",
+        "time": "03/09/2026 00:00:00",
+        "ticker": "",
+        "name": "",
+        "shares": "",
+        "pricePerShare": "",
+        "currencyPricePerShare": "",
+        "exchangeRate": "",
+        "total": "1.25",
+        "currencyTotal": "EUR",
+        "conversionFee": "",
+        "currencyConversionFee": ""
+      },
+      {
+        "action": "Market buy",
+        "time": "04/09/2026 14:30:00",
+        "ticker": "AAPL",
+        "name": "Apple",
+        "shares": "1.25000000",
+        "pricePerShare": "200.00",
+        "currencyPricePerShare": "USD",
+        "exchangeRate": "1.25",
+        "total": "200.30",
+        "currencyTotal": "EUR",
+        "conversionFee": "0.30",
+        "currencyConversionFee": "EUR"
+      },
+      {
+        "action": "Dividend (Dividend)",
+        "time": "15/09/2026 12:00:00",
+        "ticker": "AAPL",
+        "name": "Apple",
+        "shares": "2.00000000",
+        "pricePerShare": "0.25",
+        "currencyPricePerShare": "USD",
+        "exchangeRate": "1.25",
+        "total": "0.40",
+        "currencyTotal": "EUR",
+        "conversionFee": "",
+        "currencyConversionFee": ""
+      }
+    ]
+  }
+}

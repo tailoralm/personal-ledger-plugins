@@ -1,0 +1,19 @@
+{
+  "name": "personal-ledger-plugins",
+  "version": "1.0.0",
+  "description": "Plugin SDK v1, JSON schemas, templates, compatibility fixtures, and contribution conventions for Personal Ledger bank statement importers.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build:templates": "node scripts/build-templates.mjs",
+    "test": "node scripts/build-templates.mjs && node scripts/run-tests.mjs"
+  },
+  "devDependencies": {
+    "mupdf": "^1.28.0",
+    "typescript": "^6.0.3"
+  }
+}

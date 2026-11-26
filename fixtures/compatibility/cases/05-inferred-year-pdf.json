@@ -1,0 +1,53 @@
+{
+  "caseId": "05-inferred-year-pdf",
+  "description": "Positioned PDF with MM.DD dates and January closing header infers December-on-January year rollover and preserves raw PDF evidence.",
+  "inputFile": "inputs/inferred-year-activobank.pdf",
+  "expectedImportResult": {
+    "pluginApiVersion": "1",
+    "pluginId": "activobank-pdf",
+    "institutionId": "activobank",
+    "transactions": [
+      {
+        "date": "2025-12-31",
+        "description": "Compra Padaria",
+        "amount": "-12.50",
+        "currency": "",
+        "balance": "100.00",
+        "evidence": {
+          "row": 2,
+          "page": 1,
+          "locator": "Page 1, row 2",
+          "rawDate": "12.31",
+          "rawAmount": "-12,50",
+          "runningBalance": "100,00",
+          "yearInferred": true
+        }
+      },
+      {
+        "date": "2026-01-05",
+        "description": "Transferencia",
+        "amount": "-100.00",
+        "currency": "",
+        "balance": "0.00",
+        "evidence": {
+          "row": 3,
+          "page": 1,
+          "locator": "Page 1, row 3",
+          "rawDate": "01.05",
+          "rawAmount": "-100,00",
+          "runningBalance": "0,00",
+          "yearInferred": true
+        }
+      }
+    ],
+    "diagnostics": []
+  },
+  "expectedLegacyRawPdfValues": [
+    { "date": "31/12/2025", "value": "-12,50", "balance": "100,00" },
+    { "date": "05/01/2026", "value": "-100,00", "balance": "0,00" }
+  ],
+  "expectedLegacyNormalizedValues": [
+    { "date": "31/12/2025", "value": "-12.50", "balance": "100.00" },
+    { "date": "05/01/2026", "value": "-100.00", "balance": "0.00" }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "../../schemas/plugin-manifest.v1.schema.json",
+  "id": "example-pdf-bank",
+  "name": "Example PDF & CSV Bank Importer",
+  "version": "1.0.0",
+  "pluginApiVersion": "1",
+  "type": "bank-importer",
+  "description": "Reference TypeScript bank importer template supporting multi-page positioned PDFs and CSV statements.",
+  "author": {
+    "name": "Personal Ledger Contributors",
+    "url": "https://github.com/tailoralm/personal-ledger-plugins"
+  },
+  "license": "MIT",
+  "institution": {
+    "id": "example-pdf-bank",
+    "name": "Example PDF Bank",
+    "country": "PT",
+    "legacyNames": ["Example PDF Bank"]
+  },
+  "formats": ["pdf", "csv"],
+  "mimeTypes": ["application/pdf", "text/csv"],
+  "extensions": [".pdf", ".csv"],
+  "entrypoint": "dist/importer.mjs",
+  "accountTypes": ["bank", "savings"],
+  "capabilities": {
+    "supportsRunningBalance": true,
+    "supportsSourceIds": false,
+    "supportsMultiCurrency": false,
+    "supportsYearInference": true,
+    "supportsInvestments": false
+  },
+  "limits": {
+    "maxFileBytes": 20971520,
+    "timeoutMs": 10000,
+    "maxMemoryMb": 128
+  },
+  "permissions": [],
+  "languages": ["pt", "en"],
+  "keywords": ["template", "typescript", "pdf", "csv", "example"],
+  "tier": "official"
+}
