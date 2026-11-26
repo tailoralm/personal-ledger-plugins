@@ -40,7 +40,7 @@ function formatDiagnostics(ts, diagnostics) {
   });
 }
 
-export async function buildTemplateProject(templateDir, ts) {
+function compileProject(templateDir, ts) {
   const resolvedDir = path.resolve(templateDir);
   const tsconfigPath = path.join(resolvedDir, 'tsconfig.json');
   const configFile = ts.readConfigFile(tsconfigPath, file => fs.readFileSync(file, 'utf8'));
@@ -69,16 +69,18 @@ export async function buildTemplateProject(templateDir, ts) {
     throw new Error(formatDiagnostics(ts, preEmitDiagnostics));
   }
 
-  const writtenFiles = [];
+  const emitted = [];
   const emitResult = program.emit(undefined, (fileName, text) => {
     const outPath = fileName.endsWith('.js')
       ? `${fileName.slice(0, -3)}.mjs`
       : fileName.endsWith('.js.map')
         ? `${fileName.slice(0, -7)}.mjs.map`
         : fileName;
-    fs.mkdirSync(path.dirname(outPath), { recursive: true });
-    fs.writeFileSync(outPath, text, 'utf8');
-    writtenFiles.push(outPath);
+    emitted.push({
+      outPath,
+      relPath: path.relative(resolvedDir, outPath).split(path.sep).join('/'),
+      text,
+    });
   });
 
   if (emitResult.diagnostics.length > 0) {
@@ -88,6 +90,23 @@ export async function buildTemplateProject(templateDir, ts) {
     throw new Error(`TypeScript emit skipped for "${templateDir}".`);
   }
 
+  return emitted;
+}
+
+export async function compileTemplateProjectInMemory(templateDir, ts) {
+  const resolvedTs = ts ?? await loadTypeScript();
+  return compileProject(templateDir, resolvedTs);
+}
+
+export async function buildTemplateProject(templateDir, ts) {
+  const resolvedTs = ts ?? await loadTypeScript();
+  const emitted = compileProject(templateDir, resolvedTs);
+  const writtenFiles = [];
+  for (const file of emitted) {
+    fs.mkdirSync(path.dirname(file.outPath), { recursive: true });
+    fs.writeFileSync(file.outPath, file.text, 'utf8');
+    writtenFiles.push(file.outPath);
+  }
   return writtenFiles;
 }
 
