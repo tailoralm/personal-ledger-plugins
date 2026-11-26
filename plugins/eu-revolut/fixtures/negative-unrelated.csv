@@ -1,0 +1,3 @@
+Action,Time (UTC),ISIN,Ticker,Name,Notes,ID,No. of shares,Price / share,Currency (Price / share),Exchange rate,Total,Currency (Total),Merchant name
+Deposit,2026-09-01 08:00:00,,,,,dep-t212-1,,,,,1000.00,EUR,
+Card debit,2026-09-02 10:00:00,,,,,card-t212-1,,,,,-12.50,EUR,Corner Bakery
