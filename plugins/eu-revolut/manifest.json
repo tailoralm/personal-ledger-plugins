@@ -1,0 +1,41 @@
+{
+  "$schema": "../../schemas/plugin-manifest.v1.schema.json",
+  "id": "eu-revolut",
+  "name": "Revolut",
+  "version": "1.0.0",
+  "pluginApiVersion": "1",
+  "type": "bank-importer",
+  "tier": "official",
+  "description": "Parses Portuguese and English Revolut account CSV statements with double-encoded UTF-8 mojibake repair, product filtering, multi-currency support, source IDs, and zero running balances.",
+  "author": {
+    "name": "Personal Ledger"
+  },
+  "license": "MIT",
+  "institution": {
+    "id": "revolut",
+    "name": "Revolut",
+    "country": "EU",
+    "legacyNames": ["Revolut"]
+  },
+  "formats": ["csv"],
+  "mimeTypes": ["text/csv", "application/csv", "text/plain"],
+  "extensions": [".csv"],
+  "entrypoint": "importer.mjs",
+  "accountTypes": ["bank", "savings"],
+  "languages": ["pt", "en"],
+  "keywords": ["revolut", "csv", "europe", "multi-currency", "statement"],
+  "capabilities": {
+    "supportsRunningBalance": true,
+    "supportsSourceIds": true,
+    "supportsMultiCurrency": true,
+    "supportsYearInference": false,
+    "supportsInvestments": false,
+    "options": []
+  },
+  "limits": {
+    "maxFileBytes": 20971520,
+    "timeoutMs": 15000,
+    "maxMemoryMb": 128
+  },
+  "permissions": []
+}

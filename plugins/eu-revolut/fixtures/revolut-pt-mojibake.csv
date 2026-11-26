@@ -1,0 +1,5 @@
+Tipo,Produto,Data de inÃ­cio,Data de conclusÃ£o,DescriÃ§Ã£o,Montante,Taxa,Moeda,Estado,Saldo,ID
+TransferÃªncia,Atual,2026-09-01 08:00:00,2026-09-01 08:01:00,"DepÃ³sito, SalÃ¡rio",100.00,0.00,EUR,CONCLUÃDO,100.00,rev-pt-1
+Pagamento com cartÃ£o,Atual,2026-09-02 09:15:00,2026-09-02 09:16:00,CafÃ© Central,-15.50,0.00,EUR,CONCLUÃDO,84.50,rev-pt-2
+Pagamento com cartÃ£o,Atual,2026-09-03 11:30:00,2026-09-03 11:31:00,Padaria SÃ£o JoÃ£o,-84.50,0.00,EUR,CONCLUÃDO,0.00,rev-pt-3
+TransferÃªncia,PoupanÃ§a,2026-09-04 10:00:00,2026-09-04 10:00:00,Cofre FÃ©rias,-50.00,0.00,EUR,CONCLUÃDO,50.00,rev-pt-4

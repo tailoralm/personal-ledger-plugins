@@ -5,6 +5,72 @@
   "rawRegistryUrl": "https://raw.githubusercontent.com/tailoralm/personal-ledger-plugins/main/registry.json",
   "plugins": [
     {
+      "id": "eu-revolut",
+      "name": "Revolut",
+      "description": "Parses Portuguese and English Revolut account CSV statements with double-encoded UTF-8 mojibake repair, product filtering, multi-currency support, source IDs, and zero running balances.",
+      "tier": "official",
+      "author": {
+        "name": "Personal Ledger"
+      },
+      "license": "MIT",
+      "institution": {
+        "id": "revolut",
+        "name": "Revolut",
+        "country": "EU",
+        "legacyNames": [
+          "Revolut"
+        ]
+      },
+      "formats": [
+        "csv"
+      ],
+      "mimeTypes": [
+        "text/csv",
+        "application/csv",
+        "text/plain"
+      ],
+      "extensions": [
+        ".csv"
+      ],
+      "accountTypes": [
+        "bank",
+        "savings"
+      ],
+      "languages": [
+        "pt",
+        "en"
+      ],
+      "keywords": [
+        "revolut",
+        "csv",
+        "europe",
+        "multi-currency",
+        "statement"
+      ],
+      "capabilities": {
+        "supportsRunningBalance": true,
+        "supportsSourceIds": true,
+        "supportsMultiCurrency": true,
+        "supportsYearInference": false,
+        "supportsInvestments": false,
+        "options": []
+      },
+      "latestVersion": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "pluginApiVersion": "1",
+          "tag": "eu-revolut@1.0.0",
+          "packageFile": "eu-revolut-1.0.0.zip",
+          "downloadUrl": "https://github.com/tailoralm/personal-ledger-plugins/releases/download/eu-revolut%401.0.0/eu-revolut-1.0.0.zip",
+          "sourcePath": "plugins/eu-revolut",
+          "sha256": "16ba87aa2ee7b83e27420362abc94f1745c11318ae0378aca3755d936895a1c9",
+          "sizeBytes": 17304,
+          "changelog": "- Initial standalone Plugin SDK v1 release migrated from Personal Ledger's `RevolutCsvParserService` and `CsvReaderService`.\n- Supports Portuguese and English Revolut CSV headers (including reordered columns and legacy positional fallback), comma/semicolon/tab delimiter auto-detection, quoted fields, double-encoded UTF-8 mojibake repair, and Latin-1 fallback.\n- Emits canonical calendar-valid ISO `YYYY-MM-DD` dates, raw descriptions, normalized `.`-decimal amounts and running balances (including `\"0\"` / `\"0.00\"`), uppercase ISO 4217 multi-currency codes, `sourceId`, `evidence`, and structured row diagnostics (`FILTERED_PRODUCT`, `INVALID_ROW`, `INVALID_CURRENCY`)."
+        }
+      ]
+    },
+    {
       "id": "pt-activobank",
       "name": "ActivoBank",
       "description": "Parses ActivoBank Portugal PDF account statements with positioned column detection, statement-level year inference, and running balance extraction.",
