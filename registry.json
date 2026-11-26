@@ -65,6 +65,69 @@
           "changelog": "- Initial standalone Plugin SDK v1 release migrated from Personal Ledger's `PdfParserActivobankService`.\n- Supports positioned multi-page PDF column extraction, `A TRANSPORTAR` page breaks, `SALDO FINAL` footer stops, and `EXT. N. YYYY/NNN` statement-level year inference with December-on-January rollover.\n- Emits canonical ISO `YYYY-MM-DD` dates, normalized `.`-decimal amounts and running balances (including `0.00`), raw PDF evidence (`rawDate`, `rawAmount`, `runningBalance`, `yearInferred`), and row diagnostics."
         }
       ]
+    },
+    {
+      "id": "pt-bankinter",
+      "name": "BankInter",
+      "description": "Parses BankInter Portugal PDF account statements with positioned column detection, running balance extraction, currency detection, and exchange-fee fallback.",
+      "tier": "official",
+      "author": {
+        "name": "Personal Ledger"
+      },
+      "license": "MIT",
+      "institution": {
+        "id": "bankinter",
+        "name": "BankInter",
+        "country": "PT",
+        "legacyNames": [
+          "BankInter",
+          "Bankinter"
+        ]
+      },
+      "formats": [
+        "pdf"
+      ],
+      "mimeTypes": [
+        "application/pdf"
+      ],
+      "extensions": [
+        ".pdf"
+      ],
+      "accountTypes": [
+        "bank",
+        "savings"
+      ],
+      "languages": [
+        "pt"
+      ],
+      "keywords": [
+        "bankinter",
+        "portugal",
+        "pdf",
+        "statement"
+      ],
+      "capabilities": {
+        "supportsRunningBalance": true,
+        "supportsSourceIds": false,
+        "supportsMultiCurrency": true,
+        "supportsYearInference": false,
+        "supportsInvestments": false,
+        "options": []
+      },
+      "latestVersion": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "pluginApiVersion": "1",
+          "tag": "pt-bankinter@1.0.0",
+          "packageFile": "pt-bankinter-1.0.0.zip",
+          "downloadUrl": "https://github.com/tailoralm/personal-ledger-plugins/releases/download/pt-bankinter%401.0.0/pt-bankinter-1.0.0.zip",
+          "sourcePath": "plugins/pt-bankinter",
+          "sha256": "02c24f75d61b389e398fc4e3d527d805d9b99bea0f59a1fa4dc0fc4e6dfe8067",
+          "sizeBytes": 15034,
+          "changelog": "- Initial standalone Plugin SDK v1 release migrated from Personal Ledger's `PdfParserBankinterService`.\n- Supports positioned multi-page PDF column extraction, `A TRANSPORTAR` page breaks, `Conforme` footer stops, `Moeda` ISO currency extraction, and `Taxa Câmbio` exchange-fee fallback.\n- Emits canonical ISO `YYYY-MM-DD` dates, normalized `.`-decimal amounts and running balances (including `0.00`), raw PDF evidence (`rawDate`, `rawAmount`, `runningBalance`), and row diagnostics."
+        }
+      ]
     }
   ]
 }

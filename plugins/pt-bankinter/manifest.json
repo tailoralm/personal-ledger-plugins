@@ -1,0 +1,41 @@
+{
+  "$schema": "../../schemas/plugin-manifest.v1.schema.json",
+  "id": "pt-bankinter",
+  "name": "BankInter",
+  "version": "1.0.0",
+  "pluginApiVersion": "1",
+  "type": "bank-importer",
+  "tier": "official",
+  "description": "Parses BankInter Portugal PDF account statements with positioned column detection, running balance extraction, currency detection, and exchange-fee fallback.",
+  "author": {
+    "name": "Personal Ledger"
+  },
+  "license": "MIT",
+  "institution": {
+    "id": "bankinter",
+    "name": "BankInter",
+    "country": "PT",
+    "legacyNames": ["BankInter", "Bankinter"]
+  },
+  "formats": ["pdf"],
+  "mimeTypes": ["application/pdf"],
+  "extensions": [".pdf"],
+  "entrypoint": "importer.mjs",
+  "accountTypes": ["bank", "savings"],
+  "languages": ["pt"],
+  "keywords": ["bankinter", "portugal", "pdf", "statement"],
+  "capabilities": {
+    "supportsRunningBalance": true,
+    "supportsSourceIds": false,
+    "supportsMultiCurrency": true,
+    "supportsYearInference": false,
+    "supportsInvestments": false,
+    "options": []
+  },
+  "limits": {
+    "maxFileBytes": 20971520,
+    "timeoutMs": 15000,
+    "maxMemoryMb": 128
+  },
+  "permissions": []
+}
