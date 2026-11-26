@@ -237,6 +237,43 @@ test('sdk.pdf helpers never mutate frozen input words and parse multi-page posit
   assert.equal(bankinterParsed.transactions[0].amount, '-12.50');
   assert.equal(bankinterParsed.transactions[0].balance, '100.00');
   assert.equal(bankinterParsed.transactions[0].evidence.locator, 'Page 1, row 2');
+  assert.equal(bankinterParsed.transactions[0].evidence.runningBalance, '100.00');
+
+  // Explicit row.runningBalance overrides normalized evidence.runningBalance for rawPdfValues parity
+  const bankinterRawBalance = pdf.parsePositionedTable(bankinterInput.pdf, {
+    headerKeywords: ['data movimento', 'data valor', 'descrição', 'montante', 'saldo'],
+    headerRegex: /data\s+movimento.*data\s+valor.*descriç[ãa]o.*transação.*montante.*moeda.*saldo.*taxa\s+c[âa]mbio/i,
+    footerRegex: /\bconforme\b/i,
+    decimalFormat: 'pt',
+    dateSeparator: '-',
+    columnsConfig: () => ({
+      date1: [0, 60],
+      date2: [68, 108],
+      description: [108, 304],
+      credit: [347, 391],
+      debit: [467, 521],
+      balance: [420, 467],
+    }),
+    extractDataFromRow: (rowWords, columns) => {
+      let date = '';
+      let description = '';
+      let value = '';
+      let balance = '';
+      for (const word of rowWords) {
+        if (word.x >= columns.date1[0] && word.x < columns.date1[1]) date = word.text;
+        else if (word.x >= columns.date2[1] && word.x < columns.description[1]) {
+          description += (description ? ' ' : '') + word.text;
+        } else if (word.x >= columns.credit[0] && word.x < columns.credit[1]) {
+          value += word.text;
+        } else if (word.x >= columns.balance[0] && word.x < columns.balance[1]) {
+          balance += word.text;
+        }
+      }
+      return { date, description, value, balance, rawDate: date, rawAmount: value, runningBalance: balance };
+    },
+  });
+  assert.equal(bankinterRawBalance.transactions[0].balance, '100.00');
+  assert.equal(bankinterRawBalance.transactions[0].evidence.runningBalance, '100,00');
 
   // Quote/semicolon escaping and empty-transactions behavior in toLegacyNormalizedCsv
   const escapedCsv = toLegacyNormalizedCsv({
