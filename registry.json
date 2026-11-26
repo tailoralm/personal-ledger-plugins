@@ -1,0 +1,7 @@
+{
+  "$schema": "./schemas/registry.v1.schema.json",
+  "schemaVersion": "1",
+  "repository": "tailoralm/personal-ledger-plugins",
+  "rawRegistryUrl": "https://raw.githubusercontent.com/tailoralm/personal-ledger-plugins/main/registry.json",
+  "plugins": []
+}

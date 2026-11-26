@@ -1,0 +1,364 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://personal-ledger.dev/schemas/registry.v1.schema.json",
+  "title": "Personal Ledger Plugin Marketplace Registry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "repository",
+    "rawRegistryUrl",
+    "plugins"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+$"
+    },
+    "rawRegistryUrl": {
+      "type": "string",
+      "pattern": "^https://.+"
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pluginEntry"
+      }
+    }
+  },
+  "$defs": {
+    "pluginEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "description",
+        "tier",
+        "author",
+        "license",
+        "institution",
+        "formats",
+        "mimeTypes",
+        "extensions",
+        "accountTypes",
+        "capabilities",
+        "latestVersion",
+        "versions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["official", "community"]
+        },
+        "author": {
+          "$ref": "#/$defs/author"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "homepage": {
+          "type": "string",
+          "pattern": "^https?://.+"
+        },
+        "institution": {
+          "$ref": "#/$defs/institution"
+        },
+        "formats": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["pdf", "csv", "xlsx"]
+          }
+        },
+        "mimeTypes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "extensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^\\.[a-z0-9]+$"
+          }
+        },
+        "accountTypes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["bank", "savings", "spend", "invest", "manual", "coverflex"]
+          }
+        },
+        "languages": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "capabilities": {
+          "$ref": "#/$defs/capabilities"
+        },
+        "latestVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+        },
+        "versions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/versionEntry"
+          }
+        }
+      }
+    },
+    "versionEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "pluginApiVersion",
+        "tag",
+        "packageFile",
+        "downloadUrl",
+        "sourcePath",
+        "sha256",
+        "sizeBytes",
+        "changelog"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+        },
+        "pluginApiVersion": {
+          "type": "string",
+          "const": "1"
+        },
+        "tag": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)+@\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+        },
+        "packageFile": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+-\\d+\\.\\d+\\.\\d+\\.zip$"
+        },
+        "downloadUrl": {
+          "type": "string",
+          "pattern": "^https://.+\\.zip$"
+        },
+        "sourcePath": {
+          "type": "string",
+          "pattern": "^plugins/[a-z0-9]+(?:-[a-z0-9]+)+$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "changelog": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https?://.+"
+        }
+      }
+    },
+    "institution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "country"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "country": {
+          "type": "string",
+          "pattern": "^([A-Z]{2}|EU|INT)$"
+        },
+        "legacyNames": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "supportsRunningBalance",
+        "supportsSourceIds",
+        "supportsMultiCurrency",
+        "supportsYearInference",
+        "supportsInvestments"
+      ],
+      "properties": {
+        "supportsRunningBalance": {
+          "type": "boolean"
+        },
+        "supportsSourceIds": {
+          "type": "boolean"
+        },
+        "supportsMultiCurrency": {
+          "type": "boolean"
+        },
+        "supportsYearInference": {
+          "type": "boolean"
+        },
+        "supportsInvestments": {
+          "type": "boolean"
+        },
+        "supportsSideInvestments": {
+          "type": "boolean"
+        },
+        "supportsBackfill": {
+          "type": "boolean"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/manifestOption"
+          }
+        }
+      }
+    },
+    "manifestOption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "description", "type", "default"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9_-]*$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": ["boolean", "enum"]
+        },
+        "default": {
+          "type": ["boolean", "string"]
+        },
+        "legacyCliDefault": {
+          "type": ["boolean", "string"]
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "if": {
+        "properties": {
+          "type": {
+            "const": "boolean"
+          }
+        },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "default": {
+            "type": "boolean"
+          },
+          "legacyCliDefault": {
+            "type": "boolean"
+          }
+        },
+        "not": {
+          "required": ["values"]
+        }
+      },
+      "else": {
+        "required": ["values"],
+        "properties": {
+          "default": {
+            "type": "string",
+            "minLength": 1
+          },
+          "legacyCliDefault": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

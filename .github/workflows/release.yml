@@ -1,0 +1,142 @@
+name: Release Plugin
+
+on:
+  push:
+    tags:
+      - '*@[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Plugin release tag (<plugin-id>@<semver>, e.g. pt-activobank@1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Package and Publish Plugin Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', inputs.tag) || github.ref }}
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run marketplace CI verification
+        run: npm run ci:verify
+
+      - name: Run full test suite
+        run: npm test
+
+      - name: Validate tag, build deterministic archive, and verify immutability
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$RELEASE_TAG" =~ ^([a-z0-9]+(-[a-z0-9]+)+)@([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "Invalid release tag '$RELEASE_TAG'. Expected '<plugin-id>@<major>.<minor>.<patch>'." >&2
+            exit 1
+          fi
+
+          PLUGIN_ID="${BASH_REMATCH[1]}"
+          PLUGIN_VERSION="${BASH_REMATCH[3]}"
+          PLUGIN_DIR="plugins/${PLUGIN_ID}"
+          ZIP_NAME="${PLUGIN_ID}-${PLUGIN_VERSION}.zip"
+
+          if [[ ! -f "${PLUGIN_DIR}/manifest.json" ]]; then
+            echo "Plugin manifest not found at '${PLUGIN_DIR}/manifest.json'." >&2
+            exit 1
+          fi
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release '$RELEASE_TAG' already exists. Refusing to overwrite immutable release assets." >&2
+            exit 1
+          fi
+
+          node scripts/package-plugin.mjs "$PLUGIN_DIR" --out-dir dist-packages --write-sha256
+
+          (cd dist-packages && sha256sum -c "${ZIP_NAME}.sha256")
+          ACTUAL_SHA256="$(awk '{print $1}' "dist-packages/${ZIP_NAME}.sha256")"
+          ACTUAL_SIZE="$(wc -c < "dist-packages/${ZIP_NAME}" | tr -d ' ')"
+
+          export PLUGIN_ID PLUGIN_VERSION ZIP_NAME ACTUAL_SHA256 ACTUAL_SIZE
+          node --input-type=module - <<'EOF'
+          import fs from 'node:fs';
+
+          const {
+            PLUGIN_ID,
+            PLUGIN_VERSION,
+            RELEASE_TAG,
+            ZIP_NAME,
+            ACTUAL_SHA256,
+            ACTUAL_SIZE,
+          } = process.env;
+
+          const manifest = JSON.parse(fs.readFileSync(`plugins/${PLUGIN_ID}/manifest.json`, 'utf8'));
+          if (manifest.id !== PLUGIN_ID) {
+            throw new Error(`Manifest id "${manifest.id}" does not match tag plugin id "${PLUGIN_ID}".`);
+          }
+          if (manifest.version !== PLUGIN_VERSION) {
+            throw new Error(`Manifest version "${manifest.version}" does not match tag version "${PLUGIN_VERSION}".`);
+          }
+
+          const registry = JSON.parse(fs.readFileSync('registry.json', 'utf8'));
+          const pluginEntry = registry.plugins.find(p => p.id === PLUGIN_ID);
+          if (!pluginEntry) {
+            throw new Error(`Plugin "${PLUGIN_ID}" is missing from registry.json.`);
+          }
+
+          const versionEntry = pluginEntry.versions.find(v => v.version === PLUGIN_VERSION);
+          if (!versionEntry) {
+            throw new Error(`Version "${PLUGIN_VERSION}" for "${PLUGIN_ID}" is missing from registry.json.`);
+          }
+          if (versionEntry.tag !== RELEASE_TAG) {
+            throw new Error(`Registry tag "${versionEntry.tag}" does not match "${RELEASE_TAG}".`);
+          }
+          if (versionEntry.packageFile !== ZIP_NAME) {
+            throw new Error(`Registry packageFile "${versionEntry.packageFile}" does not match "${ZIP_NAME}".`);
+          }
+          if (versionEntry.sha256 !== ACTUAL_SHA256) {
+            throw new Error(`Built ZIP sha256 (${ACTUAL_SHA256}) does not match registry.json (${versionEntry.sha256}).`);
+          }
+          if (String(versionEntry.sizeBytes) !== String(ACTUAL_SIZE)) {
+            throw new Error(`Built ZIP sizeBytes (${ACTUAL_SIZE}) does not match registry.json (${versionEntry.sizeBytes}).`);
+          }
+
+          const notes = [
+            `# ${pluginEntry.name} (${RELEASE_TAG})`,
+            '',
+            `- **Plugin ID**: \`${PLUGIN_ID}\``,
+            `- **Version**: \`${PLUGIN_VERSION}\` (Plugin API \`v${versionEntry.pluginApiVersion}\`)`,
+            `- **Tier**: \`${pluginEntry.tier}\``,
+            `- **Package**: \`${ZIP_NAME}\` (${versionEntry.sizeBytes} bytes)`,
+            `- **SHA-256**: \`${versionEntry.sha256}\``,
+            '',
+            '## Changelog',
+            '',
+            versionEntry.changelog,
+            '',
+          ].join('\n');
+
+          fs.writeFileSync('dist-packages/release-notes.md', notes, 'utf8');
+          EOF
+
+          gh release create "$RELEASE_TAG" \
+            "dist-packages/${ZIP_NAME}" \
+            "dist-packages/${ZIP_NAME}.sha256" \
+            --title "$RELEASE_TAG" \
+            --notes-file "dist-packages/release-notes.md"

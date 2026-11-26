@@ -10,6 +10,10 @@
   },
   "scripts": {
     "build:templates": "node scripts/build-templates.mjs",
+    "registry:build": "node scripts/build-registry.mjs",
+    "registry:check": "node scripts/build-registry.mjs --check",
+    "plugin:package": "node scripts/package-plugin.mjs",
+    "ci:verify": "node scripts/ci-verify.mjs",
     "test": "node scripts/build-templates.mjs && node scripts/run-tests.mjs"
   },
   "devDependencies": {

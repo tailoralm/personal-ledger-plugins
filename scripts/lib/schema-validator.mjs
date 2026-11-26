@@ -309,12 +309,11 @@ export function assertValidSchema(schema, data, label = 'Document') {
   }
 }
 
-export function validateManifestSemantics(manifest, manifestSchema) {
-  assertValidSchema(manifestSchema, manifest, 'Plugin manifest');
+function validateCapabilityOptions(options, label) {
   const optionIds = new Set();
-  for (const option of manifest.capabilities?.options ?? []) {
+  for (const option of options ?? []) {
     if (optionIds.has(option.id)) {
-      throw new Error(`Plugin manifest has duplicate capability option id "${option.id}".`);
+      throw new Error(`${label} has duplicate capability option id "${option.id}".`);
     }
     optionIds.add(option.id);
     if (option.type === 'enum') {
@@ -324,6 +323,104 @@ export function validateManifestSemantics(manifest, manifestSchema) {
       if (option.legacyCliDefault !== undefined && !option.values.includes(option.legacyCliDefault)) {
         throw new Error(`Capability option "${option.id}" legacyCliDefault "${option.legacyCliDefault}" must be one of ${JSON.stringify(option.values)}.`);
       }
+    }
+  }
+}
+
+export function compareSemVer(a, b) {
+  const semverRe = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/;
+  const ma = semverRe.exec(a);
+  const mb = semverRe.exec(b);
+  if (!ma || !mb) {
+    throw new Error(`Invalid SemVer comparison between "${a}" and "${b}".`);
+  }
+
+  for (let i = 1; i <= 3; i++) {
+    const na = Number(ma[i]);
+    const nb = Number(mb[i]);
+    if (na !== nb) return na - nb;
+  }
+
+  const preA = ma[4] ? ma[4].split('.') : null;
+  const preB = mb[4] ? mb[4].split('.') : null;
+  if (!preA && !preB) return 0;
+  if (!preA) return 1;
+  if (!preB) return -1;
+
+  const len = Math.max(preA.length, preB.length);
+  for (let i = 0; i < len; i++) {
+    if (i >= preA.length) return -1;
+    if (i >= preB.length) return 1;
+    const partA = preA[i];
+    const partB = preB[i];
+    const numA = /^\d+$/.test(partA);
+    const numB = /^\d+$/.test(partB);
+    if (numA && numB) {
+      const diff = Number(partA) - Number(partB);
+      if (diff !== 0) return diff;
+    } else if (numA !== numB) {
+      return numA ? -1 : 1;
+    } else if (partA !== partB) {
+      return partA < partB ? -1 : 1;
+    }
+  }
+  return 0;
+}
+
+export function validateManifestSemantics(manifest, manifestSchema) {
+  assertValidSchema(manifestSchema, manifest, 'Plugin manifest');
+  validateCapabilityOptions(manifest.capabilities?.options, 'Plugin manifest');
+}
+
+export function validateRegistrySemantics(registry, registrySchema) {
+  assertValidSchema(registrySchema, registry, 'Plugin registry');
+
+  const seenIds = new Set();
+  for (let i = 0; i < registry.plugins.length; i++) {
+    const entry = registry.plugins[i];
+    if (seenIds.has(entry.id)) {
+      throw new Error(`Plugin registry contains duplicate plugin id "${entry.id}".`);
+    }
+    seenIds.add(entry.id);
+
+    if (i > 0 && registry.plugins[i - 1].id > entry.id) {
+      throw new Error(`Plugin registry plugins[] is not sorted by id ("${registry.plugins[i - 1].id}" before "${entry.id}").`);
+    }
+
+    validateCapabilityOptions(entry.capabilities?.options, `Registry entry "${entry.id}"`);
+
+    const seenVersions = new Set();
+    for (let j = 0; j < entry.versions.length; j++) {
+      const ver = entry.versions[j];
+      if (seenVersions.has(ver.version)) {
+        throw new Error(`Registry entry "${entry.id}" contains duplicate version "${ver.version}".`);
+      }
+      seenVersions.add(ver.version);
+
+      if (j > 0 && compareSemVer(entry.versions[j - 1].version, ver.version) <= 0) {
+        throw new Error(`Registry entry "${entry.id}" versions[] must be sorted descending by SemVer ("${entry.versions[j - 1].version}" before "${ver.version}").`);
+      }
+
+      const expectedTag = `${entry.id}@${ver.version}`;
+      if (ver.tag !== expectedTag) {
+        throw new Error(`Registry entry "${entry.id}" version "${ver.version}" has invalid tag "${ver.tag}" (expected "${expectedTag}").`);
+      }
+      const expectedFile = `${entry.id}-${ver.version}.zip`;
+      if (ver.packageFile !== expectedFile) {
+        throw new Error(`Registry entry "${entry.id}" version "${ver.version}" has invalid packageFile "${ver.packageFile}" (expected "${expectedFile}").`);
+      }
+      const expectedSourcePath = `plugins/${entry.id}`;
+      if (ver.sourcePath !== expectedSourcePath) {
+        throw new Error(`Registry entry "${entry.id}" version "${ver.version}" has invalid sourcePath "${ver.sourcePath}" (expected "${expectedSourcePath}").`);
+      }
+      const expectedDownloadSuffix = `/releases/download/${encodeURIComponent(entry.id)}%40${encodeURIComponent(ver.version)}/${expectedFile}`;
+      if (!ver.downloadUrl.endsWith(expectedDownloadSuffix)) {
+        throw new Error(`Registry entry "${entry.id}" version "${ver.version}" downloadUrl "${ver.downloadUrl}" must end with "${expectedDownloadSuffix}".`);
+      }
+    }
+
+    if (entry.latestVersion !== entry.versions[0].version) {
+      throw new Error(`Registry entry "${entry.id}" latestVersion "${entry.latestVersion}" does not match highest version "${entry.versions[0].version}".`);
     }
   }
 }
