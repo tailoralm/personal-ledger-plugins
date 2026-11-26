@@ -583,7 +583,8 @@ export function parsePositionedTable(pdfDoc, config) {
       continue;
     }
 
-    const normalizedAmount = rawAmount !== '' ? decimalNormalizer(String(row.value ?? '').trim()) : null;
+    const rawValue = String(row.value ?? row.rawAmount ?? '').trim();
+    const normalizedAmount = rawValue !== '' ? decimalNormalizer(rawValue) : null;
     if (normalizedAmount === null) {
       diagnostics.push({
         locator,
@@ -595,6 +596,10 @@ export function parsePositionedTable(pdfDoc, config) {
       });
       continue;
     }
+
+    const runningBalance = typeof row.runningBalance === 'string' && row.runningBalance.trim() !== ''
+      ? row.runningBalance.trim()
+      : (rawBalance ? (normalizedBalance ?? rawBalance) : '');
 
     const tx = {
       date: isoDate,
@@ -610,7 +615,7 @@ export function parsePositionedTable(pdfDoc, config) {
         locator,
         ...(rawDate ? { rawDate } : {}),
         ...(rawAmount ? { rawAmount } : {}),
-        ...(rawBalance ? { runningBalance: normalizedBalance ?? rawBalance } : {}),
+        ...(runningBalance ? { runningBalance } : {}),
         ...(yearInferred ? { yearInferred: true } : {}),
         ...(row.action ? { action: String(row.action) } : {}),
       },

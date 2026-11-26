@@ -157,6 +157,7 @@ export interface ExtractedPdfRow {
   balance: string;
   rawDate?: string;
   rawAmount?: string;
+  runningBalance?: string;
   yearInferred?: boolean;
   currency?: string;
   sourceId?: string;

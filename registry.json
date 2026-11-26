@@ -3,5 +3,68 @@
   "schemaVersion": "1",
   "repository": "tailoralm/personal-ledger-plugins",
   "rawRegistryUrl": "https://raw.githubusercontent.com/tailoralm/personal-ledger-plugins/main/registry.json",
-  "plugins": []
+  "plugins": [
+    {
+      "id": "pt-activobank",
+      "name": "ActivoBank",
+      "description": "Parses ActivoBank Portugal PDF account statements with positioned column detection, statement-level year inference, and running balance extraction.",
+      "tier": "official",
+      "author": {
+        "name": "Personal Ledger"
+      },
+      "license": "MIT",
+      "institution": {
+        "id": "activobank",
+        "name": "ActivoBank",
+        "country": "PT",
+        "legacyNames": [
+          "ActivoBank"
+        ]
+      },
+      "formats": [
+        "pdf"
+      ],
+      "mimeTypes": [
+        "application/pdf"
+      ],
+      "extensions": [
+        ".pdf"
+      ],
+      "accountTypes": [
+        "bank",
+        "savings"
+      ],
+      "languages": [
+        "pt"
+      ],
+      "keywords": [
+        "activobank",
+        "portugal",
+        "pdf",
+        "statement"
+      ],
+      "capabilities": {
+        "supportsRunningBalance": true,
+        "supportsSourceIds": false,
+        "supportsMultiCurrency": false,
+        "supportsYearInference": true,
+        "supportsInvestments": false,
+        "options": []
+      },
+      "latestVersion": "1.0.0",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "pluginApiVersion": "1",
+          "tag": "pt-activobank@1.0.0",
+          "packageFile": "pt-activobank-1.0.0.zip",
+          "downloadUrl": "https://github.com/tailoralm/personal-ledger-plugins/releases/download/pt-activobank%401.0.0/pt-activobank-1.0.0.zip",
+          "sourcePath": "plugins/pt-activobank",
+          "sha256": "b8c492ca748938a4fae8d07a69dbcc342720b9f693df5f2ba0ada6532e1b7e0e",
+          "sizeBytes": 15373,
+          "changelog": "- Initial standalone Plugin SDK v1 release migrated from Personal Ledger's `PdfParserActivobankService`.\n- Supports positioned multi-page PDF column extraction, `A TRANSPORTAR` page breaks, `SALDO FINAL` footer stops, and `EXT. N. YYYY/NNN` statement-level year inference with December-on-January rollover.\n- Emits canonical ISO `YYYY-MM-DD` dates, normalized `.`-decimal amounts and running balances (including `0.00`), raw PDF evidence (`rawDate`, `rawAmount`, `runningBalance`, `yearInferred`), and row diagnostics."
+        }
+      ]
+    }
+  ]
 }
