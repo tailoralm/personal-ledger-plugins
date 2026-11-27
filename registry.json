@@ -193,8 +193,19 @@
         "supportsInvestments": false,
         "options": []
       },
-      "latestVersion": "1.0.0",
+      "latestVersion": "1.0.1",
       "versions": [
+        {
+          "version": "1.0.1",
+          "pluginApiVersion": "1",
+          "tag": "pt-activobank@1.0.1",
+          "packageFile": "pt-activobank-1.0.1.zip",
+          "downloadUrl": "https://github.com/tailoralm/personal-ledger-plugins/releases/download/pt-activobank%401.0.1/pt-activobank-1.0.1.zip",
+          "sourcePath": "plugins/pt-activobank",
+          "sha256": "f66dcdd6b9271e4f306c720f51e2d4f5eb154f5705e4fa89bfcf878e1bd4ae94",
+          "sizeBytes": 13118,
+          "changelog": "- Move PDF differential and staging parity checks to the repository-level pinned core gate."
+        },
         {
           "version": "1.0.0",
           "pluginApiVersion": "1",
@@ -256,8 +267,19 @@
         "supportsInvestments": false,
         "options": []
       },
-      "latestVersion": "1.0.0",
+      "latestVersion": "1.0.1",
       "versions": [
+        {
+          "version": "1.0.1",
+          "pluginApiVersion": "1",
+          "tag": "pt-bankinter@1.0.1",
+          "packageFile": "pt-bankinter-1.0.1.zip",
+          "downloadUrl": "https://github.com/tailoralm/personal-ledger-plugins/releases/download/pt-bankinter%401.0.1/pt-bankinter-1.0.1.zip",
+          "sourcePath": "plugins/pt-bankinter",
+          "sha256": "0a328e6dca7fad4559273552dd10b2a742232e7ca812aeb8ced35f00ef05a5e9",
+          "sizeBytes": 12898,
+          "changelog": "- Move PDF differential and staging parity checks to the repository-level pinned core gate."
+        },
         {
           "version": "1.0.0",
           "pluginApiVersion": "1",

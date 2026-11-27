@@ -13,8 +13,12 @@
     "registry:build": "node scripts/build-registry.mjs",
     "registry:check": "node scripts/build-registry.mjs --check",
     "plugin:package": "node scripts/package-plugin.mjs",
-    "ci:verify": "node scripts/ci-verify.mjs",
-    "test": "node scripts/build-templates.mjs && node scripts/run-tests.mjs"
+    "ci:verify": "node scripts/ci-verify.mjs && npm run provider:catalog:check",
+    "test": "node scripts/build-templates.mjs && node scripts/run-tests.mjs",
+    "provider:package": "node scripts/package-provider.mjs",
+    "provider:catalog:build": "node scripts/build-provider-catalog.mjs",
+    "provider:catalog:check": "node scripts/build-provider-catalog.mjs --check",
+    "provider:test:core": "node scripts/verify-provider-core.mjs"
   },
   "devDependencies": {
     "mupdf": "^1.28.0",

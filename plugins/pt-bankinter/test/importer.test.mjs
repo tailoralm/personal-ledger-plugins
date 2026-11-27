@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { ERROR_CODES, ImporterError, createImporterSdk } from '../../../sdk/index.mjs';
 import { toLegacyNormalizedCsv, toLegacyTransactions } from '../../../sdk/compat.mjs';
 import {
@@ -24,15 +24,7 @@ import { packagePlugin } from '../../../scripts/package-plugin.mjs';
 const PLUGIN_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT_DIR = path.resolve(PLUGIN_DIR, '../..');
 const ACTIVOBANK_DIR = path.join(ROOT_DIR, 'plugins/pt-activobank');
-const STATEMENT_PROCESSOR_DIST = '/media/second/workspace/projects/statement-processor/dist';
 
-const HEADER_ROW = [
-  [0, 700, 'Data'], [18, 700, 'Movimento'],
-  [68, 700, 'Data'], [84, 700, 'Valor'],
-  [110, 700, 'Descrição'], [305, 700, 'Transação'],
-  [350, 700, 'Montante'], [394, 700, 'Moeda'],
-  [422, 700, 'Saldo'], [470, 700, 'Taxa'], [490, 700, 'Câmbio'],
-];
 
 test('pt-bankinter passes manifest schema, isolation, security scan, and full contract validation', async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(PLUGIN_DIR, 'manifest.json'), 'utf8'));
@@ -347,7 +339,7 @@ test('pt-bankinter rejects negative, empty-table, ActivoBank, and non-PDF inputs
 test('pt-bankinter deterministic ZIP package unpacks and validates independently without pt-activobank', async () => {
   const pkg1 = packagePlugin(PLUGIN_DIR);
   const pkg2 = packagePlugin(PLUGIN_DIR);
-  assert.equal(pkg1.fileName, 'pt-bankinter-1.0.0.zip');
+  assert.equal(pkg1.fileName, 'pt-bankinter-1.0.1.zip');
   assert.equal(pkg1.sha256, pkg2.sha256);
   assert.equal(Buffer.compare(pkg1.bytes, pkg2.bytes), 0);
 
@@ -364,214 +356,5 @@ test('pt-bankinter deterministic ZIP package unpacks and validates independently
     assert.equal(fixtureResults.length, 4);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
-  }
-});
-
-test('differential and Ledger parity against statement-processor oracle (when sibling dist exists)', async t => {
-  if (!fs.existsSync(STATEMENT_PROCESSOR_DIST)) {
-    t.diagnostic(`Skipping sibling differential parity test; not found at ${STATEMENT_PROCESSOR_DIST}`);
-    return;
-  }
-
-  const { default: PdfParserBankinterService } = await import(
-    pathToFileURL(path.join(STATEMENT_PROCESSOR_DIST, 'services/pdf-parser/pdf-parser-bankinter.service.js')).href
-  );
-  const { CsvDataService } = await import(
-    pathToFileURL(path.join(STATEMENT_PROCESSOR_DIST, 'services/pdf-parser/csv-data.service.js')).href
-  );
-  const { TransformService } = await import(
-    pathToFileURL(path.join(STATEMENT_PROCESSOR_DIST, 'services/csv-transformer/transform.service.js')).href
-  );
-  const { statementEvidence, statementDiagnostics } = await import(
-    pathToFileURL(path.join(STATEMENT_PROCESSOR_DIST, 'model/statement-evidence.js')).href
-  );
-  const { LedgerRepository } = await import(
-    pathToFileURL(path.join(STATEMENT_PROCESSOR_DIST, 'application/ledger/repository.js')).href
-  );
-  const { Ledger } = await import(
-    pathToFileURL(path.join(STATEMENT_PROCESSOR_DIST, 'application/ledger/service.js')).href
-  );
-
-  const loaded = await loadPlugin(PLUGIN_DIR);
-  const sdk = createImporterSdk();
-  const parser = new PdfParserBankinterService();
-
-  const shiftedTaxaPdf = buildPositionedPdf([[
-    [0, 700, 'Data'], [22, 700, 'Movimento'],
-    [70, 700, 'Data'], [86, 700, 'Valor'],
-    [115, 700, 'Descrição'], [290, 700, 'Transação'],
-    [338, 700, 'Montante'], [386, 700, 'Moeda'],
-    [418, 700, 'Saldo'], [462, 700, 'Taxa'], [482, 700, 'Câmbio'],
-    [0, 680, '06-02-2026'], [70, 680, '06-02-2026'], [115, 680, 'Taxa'], [138, 680, 'Cambio'],
-    [418, 680, '97,50'], [462, 680, '2,50'],
-    [115, 640, 'Conforme'],
-  ]]);
-
-  for (const [label, bytes] of [
-    ['bankinter-standard.pdf', fs.readFileSync(path.join(PLUGIN_DIR, 'fixtures/bankinter-standard.pdf'))],
-    ['bankinter-multipage-currency.pdf', fs.readFileSync(path.join(PLUGIN_DIR, 'fixtures/bankinter-multipage-currency.pdf'))],
-    ['statementPdf-BankInter.pdf', statementPdf('BankInter')],
-    ['shifted-taxa.pdf', shiftedTaxaPdf],
-  ]) {
-    const input = await prepareImportInput({ fileName: label, bytes });
-    const pluginResult = await runParse(loaded, input, sdk);
-    const compat = toLegacyTransactions(pluginResult, { rawPdfValues: true });
-    const legacyTxs = await parser.parsePdf(Buffer.from(bytes));
-
-    assert.deepEqual(compat.transactions, legacyTxs, `Transaction mismatch for ${label}`);
-
-    const legacyEvidence = legacyTxs.map(tx => statementEvidence.get(tx));
-    assert.deepEqual(
-      compat.evidenceByIndex.map(ev => ({
-        row: ev.row,
-        page: ev.page,
-        rawAmount: ev.rawAmount,
-        rawDate: ev.rawDate,
-        yearInferred: ev.yearInferred === true,
-      })),
-      legacyEvidence,
-      `Evidence mismatch for ${label}`,
-    );
-
-    const legacyDiags = statementDiagnostics.get(legacyTxs) ?? [];
-    assert.deepEqual(
-      compat.diagnostics.map(d => ({
-        locator: d.locator,
-        reason: d.reason,
-        ...(d.date !== undefined ? { date: d.date } : {}),
-        ...(d.description !== undefined ? { description: d.description } : {}),
-        ...(d.value !== undefined ? { value: d.value } : {}),
-      })),
-      legacyDiags,
-      `Diagnostics mismatch for ${label}`,
-    );
-
-    const legacyCsvLines = new CsvDataService(legacyTxs).exportToCsv().split('\n');
-    const expectedCsv = [
-      'date;description;cleanDescription;category;value;bank',
-      ...legacyCsvLines.slice(1).map(line => `${line};BankInter`),
-    ].join('\n');
-    assert.equal(toLegacyNormalizedCsv(pluginResult, 'BankInter'), expectedCsv, `Normalized CSV mismatch for ${label}`);
-  }
-
-  for (const negFile of ['negative-empty-table.pdf', 'negative-unrelated.pdf']) {
-    const bytes = fs.readFileSync(path.join(PLUGIN_DIR, 'fixtures', negFile));
-    await assert.rejects(() => parser.parsePdf(bytes));
-  }
-
-  // Ledger staging, commit, repeated rows, zero running balance, overlap detection, and reconciliation
-  const tmpLedgerRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pt-bankinter-ledger-'));
-  fs.writeFileSync(path.join(tmpLedgerRoot, 'categories.json'), JSON.stringify([
-    { name: 'Income', description: '', color: '#222222', search: ['Vencimento'] },
-    { name: 'Compras', description: '', color: '#000000', search: ['Cafe'] },
-    { name: 'Bank Fees', description: '', color: '#333333', search: ['Comissao'] },
-    { name: 'Self Transfer', description: '', color: '#111111', search: ['Transferencia'] },
-  ]));
-  fs.writeFileSync(path.join(tmpLedgerRoot, 'descriptions.json'), '[]');
-
-  const repository = new LedgerRepository(path.join(tmpLedgerRoot, '.ledger'));
-  const ledger = new Ledger(repository, tmpLedgerRoot);
-  try {
-    const account = ledger.saveAccount({
-      name: 'BankInter Main',
-      institution: 'BankInter',
-      kind: 'bank',
-      currency: 'EUR',
-      openingBalance: 0,
-      openingDate: '01/02/2026',
-    });
-
-    const standardBytes = fs.readFileSync(path.join(PLUGIN_DIR, 'fixtures/bankinter-standard.pdf'));
-    const pluginInput = await prepareImportInput({ fileName: 'bankinter-standard.pdf', bytes: standardBytes });
-    const pluginResult = await runParse(loaded, pluginInput, sdk);
-
-    const staged = await ledger.imports.stage('bankinter-standard.pdf', 'BankInter', standardBytes);
-    assert.equal(staged.source, 'BankInter');
-    assert.equal(staged.rows.length, 5);
-    assert.deepEqual(
-      staged.rows.map(r => [r.date, r.rawDescription, r.amount, r.runningBalance, r.yearInferred]),
-      [
-        ['02/02/2026', 'Vencimento Mensal', 125000, 125000, false],
-        ['03/02/2026', 'Cafe Central', -1250, 123750, false],
-        ['03/02/2026', 'Cafe Central', -1250, 122500, false],
-        ['04/02/2026', 'Comissao Conversao', -250, 122250, false],
-        ['05/02/2026', 'Transferencia Final', -122250, 0, false],
-      ],
-    );
-
-    const committed = ledger.imports.commit(
-      staged.id,
-      staged.rulesRevision,
-      staged.rows.map(r => ({
-        row: r.row,
-        accountId: account.id,
-        disposition: 'add',
-        date: '',
-      })),
-    );
-    assert.equal(committed.status, 'committed');
-    assert.equal(committed.inserted, 5);
-
-    const sourceBalances = repository.all(
-      'SELECT row, runningBalance FROM source_records WHERE batchId=? ORDER BY row',
-      committed.id,
-    );
-    assert.deepEqual(sourceBalances.map(s => s.runningBalance), [125000, 123750, 122500, 122250, 0]);
-
-    const lastMovement = ledger.movements({ account: account.id }).rows.find(m => m.description === 'Transferencia Final');
-    assert.ok(lastMovement);
-    ledger.saveObservation({
-      accountId: account.id,
-      date: '05/02/2026',
-      kind: 'actual',
-      amount: 0,
-      sourceMovementId: lastMovement.id,
-      sourceClosingConfirmed: true,
-    });
-    const recon = ledger.reconcile(account.id, '05/02/2026');
-    assert.equal(recon.status, 'matched');
-    assert.equal(recon.calculated, 0);
-    assert.equal(recon.actual.amount, 0);
-    assert.equal(recon.difference, 0);
-
-    // Overlap detection: staging a second statement containing an identical 03-02-2026 Cafe Central row finds both candidates
-    const overlapPdf = Buffer.from(buildPositionedPdf([[
-      ...HEADER_ROW,
-      [0, 680, '03-02-2026'], [68, 680, '03-02-2026'], [110, 680, 'Cafe'], [130, 680, 'Central'], [350, 680, '-12,50'], [422, 680, '1.225,00'],
-      [110, 640, 'Conforme'],
-    ]]));
-    const overlapStaged = await ledger.imports.stage('overlap.pdf', 'BankInter', overlapPdf);
-    assert.equal(overlapStaged.rows[0].candidates.length, 2);
-
-    // Normalized CSV from plugin (categorized downstream via TransformService) stages cleanly into Ledger
-    const transformer = new TransformService({
-      categories: JSON.parse(fs.readFileSync(path.join(tmpLedgerRoot, 'categories.json'), 'utf8')),
-      descriptions: [],
-    });
-    const normCsvLines = toLegacyNormalizedCsv(pluginResult, 'BankInter').split('\n');
-    const categorizedCsv = [
-      normCsvLines[0],
-      ...normCsvLines.slice(1).map(line => {
-        const cols = line.split(';');
-        cols[2] = transformer.cleanDescription(cols[1]);
-        cols[3] = transformer.setCategory(cols[1]);
-        return cols.join(';');
-      }),
-    ].join('\n');
-    const normStaged = await ledger.imports.stage('plugin-normalized.csv', 'Normalized CSV', Buffer.from(categorizedCsv, 'utf8'));
-    assert.equal(normStaged.rows.length, 5);
-    assert.deepEqual(
-      normStaged.rows.map(r => [r.date, r.rawDescription, r.category, r.amount]),
-      [
-        ['02/02/2026', 'Vencimento Mensal', 'Income', 125000],
-        ['03/02/2026', 'Cafe Central', 'Compras', -1250],
-        ['03/02/2026', 'Cafe Central', 'Compras', -1250],
-        ['04/02/2026', 'Comissao Conversao', 'Bank Fees', -250],
-        ['05/02/2026', 'Transferencia Final', 'Self Transfer', -122250],
-      ],
-    );
-  } finally {
-    repository.close();
-    fs.rmSync(tmpLedgerRoot, { recursive: true, force: true });
   }
 });

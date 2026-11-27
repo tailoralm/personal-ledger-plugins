@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tailoralm.github.io/personal-ledger-plugins/schemas/provider-catalog.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["catalogVersion", "releases"],
+  "properties": {
+    "catalogVersion": { "const": 1 },
+    "releases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "type", "pluginApiVersion", "version", "sourcePath", "tag", "packageFile", "sha256", "digest", "sizeBytes"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$" },
+          "name": { "type": "string", "minLength": 1 },
+          "type": { "enum": ["market-data-provider", "exchange-rate-provider"] },
+          "pluginApiVersion": { "const": "1" },
+          "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$" },
+          "sourcePath": { "type": "string", "pattern": "^providers/[a-zA-Z0-9_-][a-zA-Z0-9_.-]*$" },
+          "tag": { "type": "string", "pattern": "^provider/[a-z0-9.-]+@[0-9A-Za-z.-]+$" },
+          "packageFile": { "type": "string", "pattern": "^[a-z0-9.-]+-[0-9A-Za-z.-]+\\.zip$" },
+          "sha256": { "$ref": "#/$defs/digest" },
+          "digest": { "$ref": "#/$defs/digest" },
+          "sizeBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 }
+        }
+      }
+    }
+  },
+  "$defs": { "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" } }
+}

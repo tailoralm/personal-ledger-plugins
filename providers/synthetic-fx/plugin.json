@@ -1,0 +1,28 @@
+{
+  "pluginApiVersion": "1",
+  "type": "exchange-rate-provider",
+  "id": "example.synthetic-fx",
+  "name": "Synthetic FX",
+  "version": "1.0.0",
+  "entrypoint": "index.mjs",
+  "capabilities": {
+    "fx": {
+      "batchSize": 2,
+      "pagination": false,
+      "creditCost": 2
+    }
+  },
+  "markets": [],
+  "routes": [
+    {
+      "id": "public",
+      "url": "https://market.example.test/v1/public"
+    }
+  ],
+  "authentication": [],
+  "recommended": {
+    "requestsPerMinute": 30,
+    "creditsPerDay": 500,
+    "intervalMinutes": 60
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "provider-http-result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "body"],
+  "properties": {
+    "status": {
+      "type": "integer",
+      "minimum": 200,
+      "maximum": 599,
+      "not": { "minimum": 300, "maximum": 399 }
+    },
+    "body": { "type": "string", "maxLength": 1048576 },
+    "retryAfterSeconds": { "type": "integer", "minimum": 1, "maximum": 86400 }
+  }
+}

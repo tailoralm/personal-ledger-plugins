@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "provider-request v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "search" },
+        "by": {
+          "enum": ["ticker", "name", "isin"]
+        },
+        "query": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "^[^\\u0000-\\u001f\\u007f]+$" },
+        "cursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "by", "query"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "metadata" },
+        "symbols": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+          "maxItems": 100,
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "cursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "symbols"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "quote" },
+        "symbols": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+          "maxItems": 100,
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "cursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "symbols"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "history" },
+        "symbols": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+          "maxItems": 100,
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "from": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+        "to": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+        "basis": {
+          "enum": ["raw", "split-adjusted", "total-return-adjusted"]
+        },
+        "cursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "symbols", "from", "to", "basis"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "corporate-actions" },
+        "symbols": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+          "maxItems": 100,
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "from": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+        "to": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+        "cursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "symbols", "from", "to"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "fx" },
+        "pairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "base": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" },
+              "quote": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" }
+            },
+            "required": ["base", "quote"]
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "from": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+        "to": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+        "cursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "pairs", "from", "to"]
+    }
+  ]
+}

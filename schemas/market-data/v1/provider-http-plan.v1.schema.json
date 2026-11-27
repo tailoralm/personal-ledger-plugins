@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "provider-http-plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "route": { "type": "string", "minLength": 1, "maxLength": 48, "pattern": "^[a-z][a-z0-9-]*$" },
+    "query": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_.~-]+$" },
+          { "type": "string", "maxLength": 1024, "pattern": "^[^\\u0000-\\u001f\\u007f]*$" }
+        ],
+        "items": false,
+        "minItems": 2,
+        "maxItems": 2
+      },
+      "maxItems": 32,
+      "minItems": 0
+    }
+  },
+  "required": ["route", "query"]
+}

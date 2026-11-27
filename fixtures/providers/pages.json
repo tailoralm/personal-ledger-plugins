@@ -1,0 +1,104 @@
+{
+  "search": {
+    "operation": "search",
+    "items": [
+      {
+        "symbol": "TEST.XNAS",
+        "ticker": "TEST",
+        "name": "Synthetic Holdings",
+        "isin": "US0123456789",
+        "mic": "XNAS",
+        "currency": "USD",
+        "kind": "equity",
+        "timezone": "America/New_York"
+      }
+    ],
+    "nextCursor": "page-2"
+  },
+  "metadata": {
+    "operation": "metadata",
+    "items": [
+      {
+        "symbol": "TEST.XNAS",
+        "ticker": "TEST",
+        "name": "Synthetic Holdings",
+        "isin": "US0123456789",
+        "mic": "XNAS",
+        "currency": "USD",
+        "kind": "equity",
+        "timezone": "America/New_York"
+      }
+    ]
+  },
+  "quote": {
+    "operation": "quote",
+    "items": [
+      {
+        "date": "30/10/2026",
+        "timestamp": "2026-10-30T15:00:00.000Z",
+        "timezone": "America/New_York",
+        "symbol": "TEST.XNAS",
+        "currency": "USD",
+        "basis": "raw",
+        "unit": "per-share",
+        "price": "123.123456789012345678"
+      }
+    ]
+  },
+  "history": {
+    "operation": "history",
+    "items": [
+      {
+        "date": "30/10/2026",
+        "timestamp": "2026-10-30T15:00:00.000Z",
+        "timezone": "America/New_York",
+        "symbol": "TEST.XNAS",
+        "currency": "USD",
+        "basis": "raw",
+        "unit": "per-share",
+        "open": "120",
+        "high": "125",
+        "low": "119",
+        "close": "123.123456789012345678",
+        "volume": "1000"
+      }
+    ]
+  },
+  "fx": {
+    "operation": "fx",
+    "items": [
+      {
+        "date": "30/10/2026",
+        "timestamp": "2026-10-30T15:00:00.000Z",
+        "timezone": "America/New_York",
+        "base": "USD",
+        "quote": "EUR",
+        "rate": "0.919999999999999999"
+      }
+    ]
+  },
+  "corporate-actions": {
+    "operation": "corporate-actions",
+    "items": [
+      {
+        "date": "30/10/2026",
+        "timestamp": "2026-10-30T15:00:00.000Z",
+        "timezone": "America/New_York",
+        "symbol": "TEST.XNAS",
+        "kind": "split",
+        "actionId": "split-1",
+        "ratio": "2"
+      },
+      {
+        "date": "30/10/2026",
+        "timestamp": "2026-10-30T15:00:00.000Z",
+        "timezone": "America/New_York",
+        "symbol": "TEST.XNAS",
+        "kind": "dividend",
+        "actionId": "dividend-1",
+        "amount": "0.03",
+        "currency": "USD"
+      }
+    ]
+  }
+}

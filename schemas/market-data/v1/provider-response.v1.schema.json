@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "provider-response v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "search" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "symbol": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+              "ticker": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+              "name": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "^[^\\u0000-\\u001f\\u007f]+$" },
+              "isin": { "type": "string", "minLength": 1, "maxLength": 12, "pattern": "^[A-Z]{2}[A-Z0-9]{9}[0-9]$" },
+              "mic": { "type": "string", "minLength": 1, "maxLength": 4, "pattern": "^[A-Z0-9]{4}$" },
+              "currency": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" },
+              "kind": {
+                "enum": ["equity", "etf", "fund", "bond", "index", "crypto", "other"]
+              },
+              "timezone": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z_+-]+(?:/[A-Za-z0-9_+-]+)*$" }
+            },
+            "required": ["symbol", "ticker", "name", "currency", "kind", "timezone"]
+          },
+          "maxItems": 1000,
+          "minItems": 0
+        },
+        "nextCursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "items"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "metadata" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "symbol": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+              "ticker": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+              "name": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "^[^\\u0000-\\u001f\\u007f]+$" },
+              "isin": { "type": "string", "minLength": 1, "maxLength": 12, "pattern": "^[A-Z]{2}[A-Z0-9]{9}[0-9]$" },
+              "mic": { "type": "string", "minLength": 1, "maxLength": 4, "pattern": "^[A-Z0-9]{4}$" },
+              "currency": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" },
+              "kind": {
+                "enum": ["equity", "etf", "fund", "bond", "index", "crypto", "other"]
+              },
+              "timezone": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z_+-]+(?:/[A-Za-z0-9_+-]+)*$" }
+            },
+            "required": ["symbol", "ticker", "name", "currency", "kind", "timezone"]
+          },
+          "maxItems": 1000,
+          "minItems": 0
+        },
+        "nextCursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "items"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "quote" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "symbol": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+              "currency": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" },
+              "unit": { "const": "per-share" },
+              "basis": {
+                "enum": ["raw", "split-adjusted", "total-return-adjusted"]
+              },
+              "date": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+              "timezone": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z_+-]+(?:/[A-Za-z0-9_+-]+)*$" },
+              "timestamp": { "type": "string", "minLength": 1, "maxLength": 24, "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" },
+              "price": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" }
+            },
+            "required": ["symbol", "currency", "unit", "basis", "date", "timezone", "timestamp", "price"]
+          },
+          "maxItems": 1000,
+          "minItems": 0
+        },
+        "nextCursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "items"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "history" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "symbol": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+              "currency": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" },
+              "unit": { "const": "per-share" },
+              "basis": {
+                "enum": ["raw", "split-adjusted", "total-return-adjusted"]
+              },
+              "date": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+              "timezone": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z_+-]+(?:/[A-Za-z0-9_+-]+)*$" },
+              "timestamp": { "type": "string", "minLength": 1, "maxLength": 24, "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" },
+              "open": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" },
+              "high": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" },
+              "low": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" },
+              "close": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" },
+              "volume": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" }
+            },
+            "required": ["symbol", "currency", "unit", "basis", "date", "timezone", "timestamp", "open", "high", "low", "close"]
+          },
+          "maxItems": 1000,
+          "minItems": 0
+        },
+        "nextCursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "items"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "fx" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "base": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" },
+              "quote": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" },
+              "date": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+              "timezone": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z_+-]+(?:/[A-Za-z0-9_+-]+)*$" },
+              "timestamp": { "type": "string", "minLength": 1, "maxLength": 24, "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" },
+              "rate": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" }
+            },
+            "required": ["base", "quote", "date", "timezone", "timestamp", "rate"]
+          },
+          "maxItems": 1000,
+          "minItems": 0
+        },
+        "nextCursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "items"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": { "const": "corporate-actions" },
+        "items": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "symbol": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+                  "actionId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+                  "date": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+                  "timezone": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z_+-]+(?:/[A-Za-z0-9_+-]+)*$" },
+                  "timestamp": { "type": "string", "minLength": 1, "maxLength": 24, "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" },
+                  "kind": { "const": "split" },
+                  "ratio": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" }
+                },
+                "required": ["symbol", "actionId", "date", "timezone", "timestamp", "kind", "ratio"]
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "symbol": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+                  "actionId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9 .:_/@+-]*$" },
+                  "date": { "type": "string", "minLength": 1, "maxLength": 10, "pattern": "^\\d{2}/\\d{2}/\\d{4}$" },
+                  "timezone": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z_+-]+(?:/[A-Za-z0-9_+-]+)*$" },
+                  "timestamp": { "type": "string", "minLength": 1, "maxLength": 24, "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" },
+                  "kind": { "const": "dividend" },
+                  "amount": { "type": "string", "minLength": 1, "maxLength": 38, "pattern": "^-?(?:0|[1-9]\\d{0,17})(?:\\.\\d{0,17}[1-9])?$" },
+                  "currency": { "type": "string", "minLength": 1, "maxLength": 3, "pattern": "^[A-Z]{3}$" }
+                },
+                "required": ["symbol", "actionId", "date", "timezone", "timestamp", "kind", "amount", "currency"]
+              }
+            ]
+          },
+          "maxItems": 1000,
+          "minItems": 0
+        },
+        "nextCursor": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^[A-Za-z0-9._~+/=:-]+$" }
+      },
+      "required": ["operation", "items"]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "enum": ["rate-limited", "authentication", "unavailable", "invalid-request", "invalid-data"]
+        },
+        "retryAfterSeconds": { "type": "integer", "minimum": 1, "maximum": 86400 }
+      },
+      "required": ["error"],
+      "allOf": [
+        {
+          "if": {
+            "required": ["retryAfterSeconds"]
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "enum": ["rate-limited", "unavailable"]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

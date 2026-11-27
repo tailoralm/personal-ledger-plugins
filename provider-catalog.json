@@ -1,0 +1,31 @@
+{
+  "catalogVersion": 1,
+  "releases": [
+    {
+      "id": "example.synthetic-fx",
+      "name": "Synthetic FX",
+      "type": "exchange-rate-provider",
+      "pluginApiVersion": "1",
+      "version": "1.0.0",
+      "sourcePath": "providers/synthetic-fx",
+      "tag": "provider/example.synthetic-fx@1.0.0",
+      "packageFile": "example.synthetic-fx-1.0.0.zip",
+      "sha256": "2ed65d359d29a087465297981a366d8da0bbdd67bd7f83f23fd76a2e69e9a119",
+      "digest": "7e4918a457c4b0fe0835a99f164c6e03d240aa8da2ad71b4b9581fa03c6bc99a",
+      "sizeBytes": 1119
+    },
+    {
+      "id": "example.synthetic-market",
+      "name": "Synthetic Market",
+      "type": "market-data-provider",
+      "pluginApiVersion": "1",
+      "version": "1.0.0",
+      "sourcePath": "providers/synthetic-market",
+      "tag": "provider/example.synthetic-market@1.0.0",
+      "packageFile": "example.synthetic-market-1.0.0.zip",
+      "sha256": "42cf9c63367588f0a8284e8b11af900dc7067ff71daff52c3d0aff0e71a9918f",
+      "digest": "08a75b085cad1ec96d81386fd4b15e9f2e4c50a2917cac2c99d27942f2b4582a",
+      "sizeBytes": 2629
+    }
+  ]
+}

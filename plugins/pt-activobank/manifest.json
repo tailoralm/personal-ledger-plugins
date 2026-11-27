@@ -2,7 +2,7 @@
   "$schema": "../../schemas/plugin-manifest.v1.schema.json",
   "id": "pt-activobank",
   "name": "ActivoBank",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "pluginApiVersion": "1",
   "type": "bank-importer",
   "tier": "official",

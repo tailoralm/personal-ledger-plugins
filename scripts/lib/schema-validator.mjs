@@ -195,6 +195,13 @@ function validateNode(schema, value, rootSchema, instancePath, errors) {
   }
 
   if (isPlainObject(value)) {
+    if (schema.minProperties !== undefined && Object.keys(value).length < schema.minProperties) {
+      errors.push({
+        path: instancePath || '/',
+        keyword: 'minProperties',
+        message: `Expected at least ${schema.minProperties} properties.`,
+      });
+    }
     if (Array.isArray(schema.required)) {
       for (const reqKey of schema.required) {
         if (!Object.prototype.hasOwnProperty.call(value, reqKey)) {
