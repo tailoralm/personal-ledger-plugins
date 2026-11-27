@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.1]
+
+- Move PDF differential and staging parity checks to the repository-level pinned core gate.
+
 ## [1.0.0]
 
 - Initial standalone Plugin SDK v1 release migrated from Personal Ledger's `PdfParserBankinterService`.

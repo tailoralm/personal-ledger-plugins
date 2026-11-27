@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { buildProviderCatalog } from '../scripts/build-provider-catalog.mjs';
 import { packageProvider } from '../scripts/package-provider.mjs';
 
 const snapshot = process.env.PERSONAL_LEDGER_CORE_SNAPSHOT;
@@ -33,6 +35,43 @@ async function coreModules() {
 const integration = (name, run) => test(name, {
   skip: snapshot ? false : 'Run npm run provider:test:core to build the pinned core snapshot',
 }, run);
+
+integration('core loads every cataloged provider ZIP and validates its isolated entrypoint', async t => {
+  const core = await coreModules();
+  const root = fileURLToPath(new URL('../', import.meta.url));
+  const { releases } = buildProviderCatalog({ check: true });
+  for (const release of releases) {
+    await t.test(release.tag, async t => {
+      let folder = path.join(root, release.sourcePath);
+      const manifestFile = path.join(folder, 'plugin.json');
+      const workingVersion = fs.existsSync(manifestFile) && JSON.parse(fs.readFileSync(manifestFile, 'utf8')).version;
+      if (workingVersion !== release.version) {
+        // Historical records retain their immutable source under the release tag.
+        const archive = execFileSync('git', ['archive', `refs/tags/${release.tag}`, '--', release.sourcePath], {
+          cwd: root, maxBuffer: 4 * 1024 * 1024,
+        });
+        const historical = fs.mkdtempSync(path.join(os.tmpdir(), 'pl-provider-release-'));
+        t.after(() => fs.rmSync(historical, { recursive: true, force: true }));
+        execFileSync('tar', ['-xf', '-', '-C', historical], { input: archive });
+        folder = path.join(historical, release.sourcePath);
+      }
+      const pkg = packageProvider(folder);
+      assert.equal(pkg.sha256, release.sha256);
+      assert.equal(pkg.sizeBytes, release.sizeBytes);
+      assert.equal(pkg.fileName, release.packageFile);
+      const [folderEntries, zipEntries] = await Promise.all([
+        core.readProviderSource({ kind: 'folder', directory: folder }),
+        core.readProviderSource({ kind: 'zip', bytes: pkg.bytes }),
+      ]);
+      assert.deepEqual(zipEntries, folderEntries);
+      const { manifest, digest } = await core.validateProviderPackage(zipEntries);
+      assert.equal(digest, release.digest);
+      assert.equal(manifest.id, release.id);
+      assert.equal(manifest.version, release.version);
+      assert.equal(manifest.type, release.type);
+    });
+  }
+});
 
 async function installFixture(t, name, core) {
   const folder = fileURLToPath(new URL(`../providers/${name}`, import.meta.url));

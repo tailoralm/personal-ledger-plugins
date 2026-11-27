@@ -6,21 +6,30 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const corePin = 'f145429702c100bdeeb5b4311b92f53db6bb0f13';
+// Last core revision before #61 retired the in-tree PDF parsers.
+const oraclePin = '7f39fe5bf4493c8b629680a68cdd0bc9083be298';
 const repo = fileURLToPath(new URL('../', import.meta.url));
 const core = path.resolve(process.env.PERSONAL_LEDGER_CORE_SOURCE ??
   '/media/second/workspace/projects/statement-processor');
 const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'pl-provider-core-'));
 const snapshot = path.join(scratch, 'source');
+const oracle = path.join(scratch, 'oracle');
 
 function run(command, args, options = {}) {
   execFileSync(command, args, { stdio: 'inherit', ...options });
 }
 
+function snapshotAt(pin, destination) {
+  const archive = `${destination}.tar`;
+  fs.mkdirSync(destination);
+  run('git', ['-C', core, 'archive', '--output', archive, pin]);
+  run('tar', ['-xf', archive, '-C', destination]);
+  fs.unlinkSync(archive);
+}
+
 try {
-  const archive = path.join(scratch, 'core.tar');
-  fs.mkdirSync(snapshot);
-  run('git', ['-C', core, 'archive', '--output', archive, corePin]);
-  run('tar', ['-xf', archive, '-C', snapshot]);
+  snapshotAt(corePin, snapshot);
+  snapshotAt(oraclePin, oracle);
 
   const contract = 'src/application/market-data/v1';
   const parity = new Map([
@@ -45,9 +54,20 @@ try {
   if (fs.existsSync(dependencies)) fs.symlinkSync(dependencies, path.join(snapshot, 'node_modules'), 'dir');
   else run('npm', ['ci'], { cwd: snapshot });
   run('npm', ['run', 'build'], { cwd: snapshot });
+
+  const lock = directory => fs.readFileSync(path.join(directory, 'package-lock.json'));
+  if (lock(oracle).equals(lock(snapshot))) {
+    fs.symlinkSync(path.join(snapshot, 'node_modules'), path.join(oracle, 'node_modules'), 'dir');
+  } else {
+    run('npm', ['ci'], { cwd: oracle });
+  }
+  run('npm', ['run', 'build'], { cwd: oracle });
+  console.log(`PDF differential oracle built at Personal Ledger ${oraclePin}.`);
+
   run(process.execPath, ['--test', 'test/market-data.test.mjs', 'test/plugin-manager.test.mjs'], { cwd: snapshot });
-  run(process.execPath, ['--test', 'test/provider-core.test.mjs'], {
-    cwd: repo, env: { ...process.env, PERSONAL_LEDGER_CORE_SNAPSHOT: snapshot },
+  run(process.execPath, ['--test', 'test/provider-core.test.mjs', 'test/importer-core.test.mjs'], {
+    cwd: repo,
+    env: { ...process.env, PERSONAL_LEDGER_CORE_SNAPSHOT: snapshot, PERSONAL_LEDGER_ORACLE_SNAPSHOT: oracle },
   });
 } finally {
   fs.rmSync(scratch, { recursive: true, force: true });

@@ -58,6 +58,7 @@ jobs:
       - name: Check out plugins
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Check out private core pin
@@ -67,6 +68,7 @@ jobs:
           repository: tailoralm/Personal-Ledger
           ref: f145429702c100bdeeb5b4311b92f53db6bb0f13
           token: ${{ env.CORE_READ_TOKEN }}
+          fetch-depth: 0
           persist-credentials: false
           path: .core-source
 
