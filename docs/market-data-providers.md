@@ -2,6 +2,8 @@
 
 The authoritative provider contract is Personal Ledger commit `f145429702c100bdeeb5b4311b92f53db6bb0f13`, which includes the provider runtime and durable broker. The five [JSON schemas](../schemas/market-data/v1/) and [TypeScript declarations](../sdk/market-data/v1/sdk-types.ts) are byte-for-byte copies of `src/application/market-data/v1/` at that commit. The two packages in [providers](../providers/) and [pages.json](../fixtures/providers/pages.json) come from its `test/fixtures/providers/`. The [negative fixtures](../fixtures/providers/negative.json) exercise additional broker and runtime cases in this repository. [Pinned core guide](https://github.com/tailoralm/Personal-Ledger/blob/f145429702c100bdeeb5b4311b92f53db6bb0f13/docs/market-data-provider-v1.md), [Core #63](https://github.com/tailoralm/Personal-Ledger/issues/63), [Core #64](https://github.com/tailoralm/Personal-Ledger/issues/64)
 
+See the [Yahoo Finance and Twelve Data assessment](market-data-provider-assessment.md) for the release blockers and a US daily-history alternative.
+
 ## Author a provider
 
 Create a self-contained folder under `providers/` with a root `plugin.json` and an ESM entrypoint. Use `pluginApiVersion: "1"`, type `market-data-provider` for any supported combination or `exchange-rate-provider` for FX only. Specify the supported markets, exact HTTPS routes, authentication slots, and each implemented operation's page support, batch size and static credit cost. Search can accept ticker, name or ISIN. Other operations cover metadata, latest quotes, historical OHLC, FX and corporate actions according to the capabilities declared by the package.
