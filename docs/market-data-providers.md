@@ -3,6 +3,7 @@
 The authoritative provider contract is Personal Ledger commit `f145429702c100bdeeb5b4311b92f53db6bb0f13`, which includes the provider runtime and durable broker. The five [JSON schemas](../schemas/market-data/v1/) and [TypeScript declarations](../sdk/market-data/v1/sdk-types.ts) are byte-for-byte copies of `src/application/market-data/v1/` at that commit. The two packages in [providers](../providers/) and [pages.json](../fixtures/providers/pages.json) come from its `test/fixtures/providers/`. The [negative fixtures](../fixtures/providers/negative.json) exercise additional broker and runtime cases in this repository. [Pinned core guide](https://github.com/tailoralm/Personal-Ledger/blob/f145429702c100bdeeb5b4311b92f53db6bb0f13/docs/market-data-provider-v1.md), [Core #63](https://github.com/tailoralm/Personal-Ledger/issues/63), [Core #64](https://github.com/tailoralm/Personal-Ledger/issues/64)
 
 See the [Yahoo Finance and Twelve Data assessment](market-data-provider-assessment.md) for the release blockers and a US daily-history alternative.
+See the [EODHD and Alpha Vantage assessment](eodhd-alpha-vantage-assessment.md) for plan limits, data rights and the broker changes required for those integrations.
 
 ## Author a provider
 
