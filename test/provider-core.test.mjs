@@ -12,6 +12,7 @@ const snapshot = process.env.PERSONAL_LEDGER_CORE_SNAPSHOT;
 const fixture = name => JSON.parse(fs.readFileSync(new URL(`../fixtures/providers/${name}.json`, import.meta.url)));
 const pages = fixture('pages');
 const negative = fixture('negative');
+const ecb = fixture('ecb-frankfurter');
 const range = { from: '01/10/2026', to: '31/10/2026' };
 const symbols = ['TEST.XNAS'];
 const requests = {
@@ -136,6 +137,53 @@ integration('core validates provider manifests and both QuickJS hooks for every 
       assert.ok(Buffer.byteLength(url.href) <= 8192);
     }
   }
+});
+
+integration('broker installs ECB FX from ZIP and publishes only date-matched QuickJS observations', async t => {
+  const core = await coreModules();
+  const { digest, id, instances, repo } = await installFixture(t, 'ecb-frankfurter', core);
+  const dispatches = [];
+  let now = Date.parse('2026-10-30T12:00:00Z');
+  const broker = new core.SqliteMarketBroker(repo, async ({ route, query, credential, beforeConnect }) => {
+    beforeConnect();
+    assert.deepEqual(route, { id: 'ecb', url: 'https://api.frankfurter.dev/v2/providers/ecb/rates' });
+    assert.equal(credential, undefined);
+    const params = Object.fromEntries(query);
+    assert.deepEqual([params.base, params.quotes], ['EUR', 'GBP,USD']);
+    dispatches.push([params.from, params.to]);
+    const status = dispatches.length === 2 ? 429 : 200;
+    if (status === 429) return { status, body: '{}', retryAfterSeconds: 2 };
+    if (dispatches.length === 3) return { status, body: '[' };
+    return { status, body: JSON.stringify(ecb.rows).replace('"rate":1.125', '"rate":1.125000000000000001') };
+  }, { now: () => now, random: () => 0 });
+  const request = { operation: 'fx', pairs: ecb.pairs, from: '05/01/2024', to: '12/01/2024' };
+  assert.throws(() => broker.enqueue(id, digest, request), /not approved/);
+  instances.approve(id, digest, digest, 'fixture reviewer');
+  broker.enqueueBatch(id, digest, [request], { rangeDays: 4 });
+  const first = await broker.runNext();
+  const second = await broker.runNext();
+  assert.ok(first && second && first !== second);
+  assert.equal(await broker.runNext(), undefined);
+  now += 2000;
+  assert.equal(await broker.runNext(), second);
+  assert.deepEqual(dispatches, [
+    ['2024-01-05', '2024-01-08'], ['2024-01-09', '2024-01-12'], ['2024-01-09', '2024-01-12'],
+  ]);
+  const { state, error } = repo.one('SELECT state,error FROM market_requests WHERE id=?', second);
+  assert.deepEqual([state, error], ['failed', 'invalid-data']);
+  assert.deepEqual(repo.all('SELECT httpStatus,credits FROM market_usage ORDER BY attemptAt,rowid')
+    .map(row => [row.httpStatus, row.credits]), [[200, 1], [429, 1], [200, 1]]);
+  const rates = repo.all('SELECT * FROM market_fx_rates');
+  assert.equal(rates.length, 8);
+  for (const [i, { base, quote }] of ecb.pairs.entries()) {
+    const row = rates.find(item => item.base === base && item.quote === quote &&
+      item.timestamp === '2024-01-05T00:00:00.000Z');
+    assert.deepEqual([row.rate, row.timezone, row.instanceId, row.digest, row.requestId],
+      [ecb.fridayRates[i], 'UTC', id, digest, first]);
+  }
+  assert.equal(rates.find(row => row.base === 'EUR' && row.timestamp === '2024-01-08T00:00:00.000Z').rate,
+    '1.125000000000000001');
+  assert.ok(rates.every(row => ['2024-01-05', '2024-01-08'].includes(row.timestamp.slice(0, 10))));
 });
 
 integration('broker rejects malformed pages and publishes prices only for an approved compatible mapping', async t => {

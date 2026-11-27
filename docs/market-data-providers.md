@@ -4,6 +4,7 @@ The authoritative provider contract is Personal Ledger commit `f145429702c100bde
 
 See the [Yahoo Finance and Twelve Data assessment](market-data-provider-assessment.md) for the release blockers and a US daily-history alternative.
 See the [EODHD and Alpha Vantage assessment](eodhd-alpha-vantage-assessment.md) for plan limits, data rights and the broker changes required for those integrations.
+See [ECB reference rates via Frankfurter](ecb-frankfurter-provider.md) to install the credential-free FX provider and request EUR, USD and GBP reference rates.
 
 ## Author a provider
 
