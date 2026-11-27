@@ -1,0 +1,17 @@
+{
+  "rows": [
+    {"date":"2024-01-05","base":"EUR","quote":"GBP","rate":0.8},
+    {"date":"2024-01-05","base":"EUR","quote":"USD","rate":1.25},
+    {"date":"2024-01-08","base":"EUR","quote":"USD","rate":1.125},
+    {"date":"2024-01-09","base":"EUR","quote":"GBP","rate":0.75}
+  ],
+  "pairs": [
+    {"base":"EUR","quote":"USD"},
+    {"base":"EUR","quote":"GBP"},
+    {"base":"USD","quote":"EUR"},
+    {"base":"GBP","quote":"EUR"},
+    {"base":"USD","quote":"GBP"},
+    {"base":"GBP","quote":"USD"}
+  ],
+  "fridayRates": ["1.25","0.8","0.8","1.25","0.64","1.5625"]
+}

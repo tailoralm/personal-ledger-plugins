@@ -1,0 +1,28 @@
+{
+  "pluginApiVersion": "1",
+  "type": "exchange-rate-provider",
+  "id": "org.personal-ledger.ecb-frankfurter",
+  "name": "ECB Reference Rates via Frankfurter",
+  "version": "1.0.0",
+  "entrypoint": "index.mjs",
+  "capabilities": {
+    "fx": {
+      "batchSize": 6,
+      "pagination": false,
+      "creditCost": 1
+    }
+  },
+  "markets": [],
+  "routes": [
+    {
+      "id": "ecb",
+      "url": "https://api.frankfurter.dev/v2/providers/ecb/rates"
+    }
+  ],
+  "authentication": [],
+  "recommended": {
+    "requestsPerMinute": 6,
+    "creditsPerDay": 120,
+    "intervalMinutes": 1440
+  }
+}

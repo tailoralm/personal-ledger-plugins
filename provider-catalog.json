@@ -26,6 +26,19 @@
       "sha256": "42cf9c63367588f0a8284e8b11af900dc7067ff71daff52c3d0aff0e71a9918f",
       "digest": "08a75b085cad1ec96d81386fd4b15e9f2e4c50a2917cac2c99d27942f2b4582a",
       "sizeBytes": 2629
+    },
+    {
+      "id": "org.personal-ledger.ecb-frankfurter",
+      "name": "ECB Reference Rates via Frankfurter",
+      "type": "exchange-rate-provider",
+      "pluginApiVersion": "1",
+      "version": "1.0.0",
+      "sourcePath": "providers/ecb-frankfurter",
+      "tag": "provider/org.personal-ledger.ecb-frankfurter@1.0.0",
+      "packageFile": "org.personal-ledger.ecb-frankfurter-1.0.0.zip",
+      "sha256": "a920314be3591686b53f6db195850cee35bd07b4132b78f1ab03625f093b56cc",
+      "digest": "5ee0b05996a771536b9cf0884463cf2302e72b54d45761e5b4ccf30cd08438a7",
+      "sizeBytes": 5838
     }
   ]
 }
